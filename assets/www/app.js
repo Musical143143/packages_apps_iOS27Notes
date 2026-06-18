@@ -11,7 +11,6 @@ const DOM = {
     emptyState: document.getElementById('emptyState'),
     noteCount: document.getElementById('noteCount'),
     masterFab: document.getElementById('masterFab'),
-    fabIcon: document.getElementById('fabIcon'),
     fabMenuOptions: document.getElementById('fabMenuOptions'),
     actionNewNote: document.getElementById('actionNewNote'),
     actionSketch: document.getElementById('actionSketch'),
@@ -109,7 +108,6 @@ function toggleFab() {
         DOM.fabMenuOptions.classList.add('shift-down');
         DOM.fabMenuOptions.classList.add('opacity-0');
         DOM.masterFab.classList.remove('master-fab-active');
-        // Typo Fix: Corrected .add parameter back to absolute classList mapping bounds
         setTimeout(() => DOM.fabMenuOptions.classList.add('hidden'), 150);
     }
 }
@@ -306,9 +304,22 @@ function initializeCanvasEngine() {
     window.addEventListener('touchend', () => drawing = false);
 }
 
+const triggerSketchWindow = () => {
+    resetFabStateInstantly();
+    const wrapper = document.getElementById('masterFabWrapper');
+    if (wrapper) wrapper.style.setProperty('display', 'none', 'important');
+    DOM.sketchView.classList.remove('hidden', 'mask-down');
+    DOM.sketchView.classList.add('mask-up');
+    setTimeout(syncCanvasSize, 350);
+};
+
 function setupEventListeners() {
     DOM.masterFab.addEventListener('click', toggleFab);
+    
+    // Explicitly bind click interaction event maps to complete row contexts
     DOM.actionNewNote.addEventListener('click', () => openEditor(null));
+    DOM.actionSketch.addEventListener('click', triggerSketchWindow);
+    
     DOM.backBtn.addEventListener('click', saveAndClose);
     DOM.saveBtn.addEventListener('click', saveAndClose);
     DOM.deleteNoteBtn.addEventListener('click', deleteCurrentNote);
@@ -367,16 +378,6 @@ function setupEventListeners() {
         });
     });
 
-    const triggerSketchWindow = () => {
-        resetFabStateInstantly();
-        const wrapper = document.getElementById('masterFabWrapper');
-        if (wrapper) wrapper.style.setProperty('display', 'none', 'important');
-        DOM.sketchView.classList.remove('hidden', 'mask-down');
-        DOM.sketchView.classList.add('mask-up');
-        setTimeout(syncCanvasSize, 350);
-    };
-
-    DOM.actionSketch.addEventListener('click', triggerSketchWindow);
     DOM.triggerInlineSketch.addEventListener('click', triggerSketchWindow);
 
     DOM.closeSketchBtn.addEventListener('click', () => {
