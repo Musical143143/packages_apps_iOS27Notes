@@ -339,3 +339,62 @@ mark { background-color: rgba(138, 74, 59, 0.2); color: #2C1A16; font-weight: 60
 .icon-speak { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2370554F'%3E%3Cpath d='M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z'/%3E%3C/svg%3E"); }
 .icon-export { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2370554F'%3E%3Cpath d='M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z'/%3E%3C/svg%3E"); }
 .icon-delete { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23DC2626'%3E%3Cpath d='M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z'/%3E%3C/svg%3E"); }
+
+
+/* 🌟 CONTEXT OVERLAY TRAIR TOOLBAR SYSTEM (515.png) 🌟 */
+.note-card {
+    position: relative;
+    overflow: hidden;
+    padding-top: 0 !important; /* Clears top space to anchor header tray safely */
+}
+
+.card-content-wrapper {
+    padding: 16px 0 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+.card-quick-actions-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background-color: #4B3C39; /* Translucent deep charcoal bar overlay tint */
+    border-radius: 24px 24px 0 0;
+    width: calc(100% + 32px);
+    margin-left: -16px;
+    height: 48px;
+    padding: 0 12px;
+    flex-shrink: 0;
+}
+
+.quick-action-btn {
+    background: none;
+    border: none;
+    outline: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 18px;
+    background-color: rgba(255, 255, 255, 0.08);
+    transition: background-color 0.15s ease;
+}
+.quick-action-btn:hover { background-color: rgba(255, 255, 255, 0.2); }
+
+/* Quick Action Vector Definitions matching 515.png design exactly */
+.qa-delete {
+    background-color: #B91C1C !important; /* Crimson Red Delete base highlight */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FFFFFF'%3E%3Cpath d='M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z'/%3E%3C/svg%3E");
+}
+.qa-expand {
+    background-color: #8B5A2B !important; /* Earthy brown expand tint */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FFFFFF'%3E%3Cpath d='M10 21v-2H6.41l5.5-5.59L10.5 12l-5.5 5.59V14H3v7h7zm4-18v2h3.59l-5.5 5.59 1.41 1.41 5.5-5.59V10H21V3h-7z'/%3E%3C/svg%3E");
+}
+.qa-pin {
+    background-color: #5C4033 !important; /* Cocoa anchor marker pin asset background */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FFFFFF'%3E%3Cpath d='M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z'/%3E%3C/svg%3E");
+}

@@ -40,7 +40,6 @@ const DOM = {
     markerModeBtn: document.getElementById('markerModeBtn'),
     toolbarStreamBtn: document.getElementById('toolbarStreamBtn'),
     toolbarMenuBtn: document.getElementById('toolbarMenuBtn'),
-    // New Minimal Layout Selectors
     toggleRibbonBtn: document.getElementById('toggleRibbonBtn'),
     formattingRibbon: document.getElementById('formattingRibbon')
 };
@@ -62,6 +61,7 @@ function formatDoc(command) {
     document.execCommand(command, false, null);
 }
 
+// 🌟 REMAPPED ENGINE: Dynamically embeds the Quick Action Bar seen in 515.png
 function renderNotesList(filterQuery = '') {
     DOM.notesContainer.innerHTML = '';
     const targetNotes = state.notes.filter(n => 
@@ -79,6 +79,7 @@ function renderNotesList(filterQuery = '') {
             const card = document.createElement('div');
             card.style.backgroundColor = note.bgColor || '#FFF0EC';
             card.className = 'note-card';
+            card.dataset.id = note.id;
             
             let displayTitle = note.title.trim() || 'Untitled';
             let displayBody = note.body.replace(/<[^>]*>/g, '').trim() || 'No additional text';
@@ -100,14 +101,21 @@ function renderNotesList(filterQuery = '') {
             const noteDate = new Date(note.updatedAt).toLocaleString([], {month:'short', day:'numeric'});
             const textContent = displayBody === 'No additional text' && sketchPreviewHtml ? '' : `<p class="note-card-text">${displayBody}</p>`;
 
+            // Inject the premium inline overlay toolbar header panel
             card.innerHTML = `
-                <h3>${displayTitle}</h3>
-                <div class="card-metadata-chip">${noteDate}</div>
-                ${sketchPreviewHtml}
-                ${textContent}
+                <div class="card-quick-actions-bar">
+                    <button class="quick-action-btn qa-delete" title="Delete entry"></button>
+                    <button class="quick-action-btn qa-expand" title="Open editor"></button>
+                    <button class="quick-action-btn qa-pin" title="Pin entry"></button>
+                </div>
+                <div class="card-content-wrapper">
+                    <h3>${displayTitle}</h3>
+                    <div class="card-metadata-chip">${noteDate}</div>
+                    ${sketchPreviewHtml}
+                    ${textContent}
+                </div>
             `;
             
-            card.addEventListener('click', () => openEditor(note.id));
             DOM.notesContainer.appendChild(card);
         });
     }
@@ -166,7 +174,6 @@ function openEditor(noteId = null) {
         DOM.editorTimestamp.textContent = new Date().toLocaleString([], {month:'short', day:'numeric', hour: '2-digit', minute:'2-digit'}).toUpperCase();
     }
     
-    // Sync current active theme selection ring inside dark bottom grid sheet
     document.querySelectorAll('.sheet-color-btn').forEach(b => {
         b.classList.remove('border-active');
         if (b.dataset.bg.toLowerCase() === state.selectedBgColor.toLowerCase()) {
@@ -175,7 +182,7 @@ function openEditor(noteId = null) {
     });
 
     DOM.editorView.style.backgroundColor = state.selectedBgColor;
-    DOM.formattingRibbon.classList.remove('hidden'); // Ribbon defaults visible on open
+    DOM.formattingRibbon.classList.remove('hidden'); 
     updateMetrics();
 }
 
@@ -286,12 +293,52 @@ function setupEventListeners() {
         updateMetrics();
     });
 
-    // 🌟 INLINE FORMATTING RIBBON SLIDEOUT TOGGLE
     DOM.toggleRibbonBtn.addEventListener('click', () => {
         DOM.formattingRibbon.classList.toggle('hidden');
     });
 
-    // 🎨 COCOA DARK BOTTOM SHEET DISPATCH CLOSURES
+    // 🌟 RE-MAPPED DIRECT CAPTURE: Links up contextual options tray items seamlessly
+    DOM.notesContainer.addEventListener('click', (e) => {
+        const card = e.target.closest('.note-card');
+        if (!card) return;
+        const noteId = card.dataset.id;
+
+        // 1. Direct Quick Delete Action
+        if (e.target.closest('.qa-delete')) {
+            e.stopPropagation();
+            if (confirm("Delete this entry instantly?")) {
+                state.notes = state.notes.filter(n => n.id !== noteId);
+                localStorage.setItem('avium_pro_offline_notes', JSON.stringify(state.notes));
+                renderNotesList(DOM.searchBar.value);
+            }
+            return;
+        }
+
+        // 2. Direct Quick Expand Action
+        if (e.target.closest('.qa-expand')) {
+            e.stopPropagation();
+            openEditor(noteId);
+            return;
+        }
+
+        // 3. Direct Quick Pin Action
+        if (e.target.closest('.qa-pin')) {
+            e.stopPropagation();
+            const noteIndex = state.notes.findIndex(n => n.id === noteId);
+            if (noteIndex > -1) {
+                const targetNote = state.notes.splice(noteIndex, 1)[0];
+                targetNote.updatedAt = Date.now(); // Bump timestamp to sort to front
+                state.notes.unshift(targetNote);
+                localStorage.setItem('avium_pro_offline_notes', JSON.stringify(state.notes));
+                renderNotesList(DOM.searchBar.value);
+            }
+            return;
+        }
+
+        // Default: Clicking anywhere else on card brings up editor safely
+        openEditor(noteId);
+    });
+
     document.addEventListener('click', (e) => {
         const paletteBtn = e.target.closest('#colorPaletteToggle');
         if (paletteBtn) {
