@@ -1,4 +1,4 @@
-/* --- OFFLINE DESIGN CORE FOR AVIUMNOTES MATERIAL 3 DESIGN SPECS --- */
+/* --- OFFLINE DESIGN CORE FOR NOTES --- */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -15,46 +15,9 @@ body {
 
 #app {
     position: relative;
-    min-h: 100vh;
+    min-height: 100vh;
     padding-bottom: 100px;
 }
-
-
-/* Align icon and text perfectly inside text-save components */
-#saveSketchBtn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 10px 22px;
-}
-
-/* Ensure the Master FAB dock explicitly remains visible, fixed, and layered on top */
-.action-fab-system-wrapper {
-    position: fixed !important;
-    bottom: 24px !important;
-    right: 24px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: flex-end !important;
-    gap: 12px !important;
-    z-index: 99 !important;
-}
-
-.master-fab-trigger {
-    width: 64px !important;
-    height: 64px !important;
-    border-radius: 24px !important;
-    background-color: #8A4A3B !important;
-    color: #FFFFFF !important;
-    border: none !important;
-    outline: none !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    cursor: pointer !important;
-}
-
 
 /* Typography Scale */
 .main-title { font-size: 36px; font-weight: 700; tracking-tight: -0.02em; color: #2C1A16; }
@@ -63,14 +26,22 @@ body {
 /* Dashboard Toolbar Shells */
 .header-toolbar {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
-    gap: 12px;
+    width: 100%;
+    gap: 8px;
+}
+
+.header-right-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
 }
 
 .search-input-wrapper {
     position: relative;
-    flex-1;
+    flex: 1;
     max-width: 220px;
 }
 
@@ -154,14 +125,16 @@ body {
     font-weight: 600;
     padding: 10px 20px;
     border-radius: 30px;
-    display: flex;
+    display: inline-flex;
     align-items: center;
+    justify-content: center;
+    gap: 6px;
     cursor: pointer;
 }
 
 .primary-btn { background-color: #8A4A3B; color: #FFFFFF; }
 .secondary-btn { background-color: #FCDCD5; color: #8A4A3B; }
-.button-icon-left { margin-right: 4px; font-size: 18px; }
+.button-icon-left { font-size: 18px; }
 
 .circle-icon-btn {
     width: 42px;
@@ -200,7 +173,13 @@ body {
 .mask-up { transform: translateY(0); }
 
 /* Document Workspace Controls */
-.editor-header { display: flex; justify-content: space-between; align-items: center; }
+.editor-header, .sketch-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 8px;
+}
 .header-utility-cluster { display: flex; gap: 10px; align-items: center; }
 
 .metrics-hud {
@@ -262,8 +241,8 @@ body {
 .active-pill { background-color: #FFFFFF; color: #8A4A3B; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
 
 .canvas-canvas-sheet { flex: 1; background-color: #FFFFFF; border-radius: 32px; border: 1px solid #F5EBE8; position: relative; overflow: hidden; }
-#paintCanvas { width: 100%; height: 100%; display: block; }
-#clearCanvasBtn { position: absolute; top: 16px; right: 16px; background-color: #FFF0EC; border: 1px solid #FCDCD5; color: #DC2626; }
+.canvas-canvas-sheet canvas { width: 100% !important; height: 100% !important; display: block !important; touch-action: none; }
+#clearCanvasBtn { position: absolute; top: 16px; right: 16px; background-color: #FFF0EC; border: 1px solid #FCDCD5; color: #DC2626; z-index: 10; }
 
 .canvas-controls-panel { background-color: #FFF0EC; border-top: 1px solid #F5EBE8; border-radius: 40px 40px 0 0; }
 .slider-control-row { display: flex; align-items: center; gap: 16px; }
@@ -272,6 +251,7 @@ body {
 .custom-range-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #8A4A3B; cursor: pointer; }
 
 .sketch-palette-row { display: flex; gap: 12px; overflow-x: auto; padding: 4px 0; }
+/* Hide default Android scroll tracks layout scrollbars */
 .sketch-palette-row::-webkit-scrollbar { display: none; }
 .sketch-color { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #FFFFFF; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.06); flex-shrink: 0; }
 .active-color { border-color: #8A4A3B !important; transform: scale(1.1); }
@@ -302,7 +282,16 @@ body {
 .translate-up { transform: translateY(0) !important; } .translate-down { transform: translateY(100%); }
 
 /* Action speed-dial FAB menus layout models */
-.action-fab-system-wrapper { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; z-index: 90; }
+.action-fab-system-wrapper { 
+    position: fixed !important; 
+    bottom: 24px !important; 
+    right: 24px !important; 
+    display: flex !important; 
+    flex-direction: column !important; 
+    align-items: flex-end !important; 
+    gap: 12px !important; 
+    z-index: 99 !important; 
+}
 .master-fab-trigger { width: 64px; height: 64px; border-radius: 20px; background-color: #8A4A3B; color: #FFFFFF; border: none; outline: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s ease, background-color 0.2s ease; }
 .master-fab-trigger span { font-size: 32px; transition: transform 0.2s ease; }
 .rotate-icon { transform: rotate(45deg); }
@@ -316,37 +305,29 @@ body {
 /* Global markup auto highlights */
 mark { background-color: rgba(138, 74, 59, 0.2); color: #2C1A16; font-weight: 600; padding: 0 2px; border-radius: 3px; }
 
-/* Prevent Header/Footer Toolbar Overlaps */
-.editor-header, .header-toolbar, .sketch-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    gap: 8px;
-}
-
-.header-utility-cluster {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
 /* Hide raw text strings if font takes a microsecond to load */
 .material-icons-round {
-    text-indent: -9999px;
-    position: relative;
+    font-family: 'Material Icons Round' !important;
+    text-indent: -9999px !important;
+    overflow: hidden !important;
+    display: inline-block !important;
+    width: 24px !important;
+    height: 24px !important;
+    position: relative !important;
 }
 .material-icons-round::before {
-    text-indent: 0;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    text-align: center;
+    text-indent: 0 !important;
+    position: absolute !important;
+    top: 0; left: 0; width: 100%; height: 100%;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
-/* Fix the floating master FAB trigger from overlapping the ribbon */
-.action-fab-system-wrapper {
-    display: none !important; /* Hides the homepage '+' FAB inside the active editor view */
-}
+/* Map direct unicode values to hide falling text block characters completely */
+.search-icon::before { content: "search"; }
+.action-icon:nth-child(1)::before { content: "view_stream"; }
+.action-icon:nth-child(2)::before { content: "more_vert"; }
+.empty-icon::before { content: "note_add"; }
+#fabIcon::before { content: "add"; }
+.master-fab-active #fabIcon::before { content: "close"; }

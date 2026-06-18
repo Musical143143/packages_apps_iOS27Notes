@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Welcome</title>
-    <!-- Completely Local Mappings -->
     <link rel="stylesheet" href="css/material-icons.css">
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -14,17 +13,19 @@
         
         <!-- MAIN DASHBOARD CONTENT VIEW -->
         <section id="listView" class="view-panel p-6">
-            <!-- Top Controls Toolbar Row -->
+            <!-- Fixed Top Search & Action Bar Layout -->
             <div class="header-toolbar mb-4">
                 <div class="search-input-wrapper">
                     <span class="material-icons-round search-icon">search</span>
                     <input type="text" id="searchBar" placeholder="Search entries...">
                 </div>
-                <span class="material-icons-round action-icon">view_stream</span>
-                <span class="material-icons-round action-icon">more_vert</span>
+                <div class="header-right-actions">
+                    <span class="material-icons-round action-icon">view_stream</span>
+                    <span class="material-icons-round action-icon">more_vert</span>
+                </div>
             </div>
 
-            <!-- App Title Welcome Branding -->
+            <!-- Dashboard Headers -->
             <div class="brand-group mb-6">
                 <h1 class="main-title">Welcome</h1>
                 <div id="noteCount" class="sub-counter">0 notes</div>
@@ -33,7 +34,7 @@
             <!-- Notes List Grid Layer -->
             <div id="notesContainer" class="notes-grid"></div>
 
-            <!-- Centered Empty Grid Layout Element -->
+            <!-- Centered Empty Space Frame -->
             <div id="emptyState" class="empty-state-frame">
                 <div class="illustration-circle">
                     <span class="material-icons-round empty-icon">note_add</span>
@@ -45,7 +46,6 @@
 
         <!-- RICH TEXT NOTE EDITOR WORKSPACE -->
         <section id="editorView" class="view-panel fixed-view hidden mask-down">
-            <!-- Navigation Action Menu Header -->
             <div class="editor-header mb-4">
                 <button id="backBtn" class="pill-btn secondary-btn">
                     <span class="material-icons-round button-icon-left">arrow_back</span> Back
@@ -58,19 +58,17 @@
                 </div>
             </div>
 
-            <!-- Analytics Metadata Panel -->
             <div class="metrics-hud mb-4">
                 <span id="editorTimestamp"></span>
                 <span id="liveMetrics" class="metric-pill">0w 0c</span>
             </div>
 
-            <!-- Content Editable Document Workspace -->
             <div class="editor-body-wrapper">
                 <input type="text" id="noteTitle" placeholder="Title">
                 <div id="noteBody" contenteditable="true" data-placeholder="Start typing your note..."></div>
             </div>
 
-            <!-- Inline Rich Text Action Ribbon Formatting Toolbar -->
+            <!-- Inline Rich Text Action Toolbar -->
             <div class="formatting-ribbon">
                 <button onclick="formatDoc('bold')" class="format-btn font-bold">B</button>
                 <button onclick="formatDoc('italic')" class="format-btn font-italic">I</button>
@@ -82,32 +80,27 @@
             </div>
         </section>
 
-        <!-- HIGH-PERFORMANCE SKETCHPAD INTERACTIVE CANVAS LAYER -->
+        <!-- INTERACTIVE CANVAS LAYER -->
         <section id="sketchView" class="view-panel fixed-view hidden mask-down sketch-layer-bg">
             <div class="sketch-header p-4">
-                <button id="closeSketchBtn" class="pill-btn secondary-btn"><span class="material-icons-round button-icon-left">close</span> Cancel</button>
+                <button id="closeSketchBtn" class="pill-btn secondary-btn">Cancel</button>
                 <div class="toggle-pill-container" id="brushModeContainer">
                     <button id="penModeBtn" class="toggle-pill-item active-pill">Solid Pen</button>
                     <button id="markerModeBtn" class="toggle-pill-item">Highlighter</button>
                 </div>
-                <button id="saveSketchBtn" class="pill-btn primary-btn font-bold shadow-md">
-                    <span class="material-icons-round button-icon-left">check</span> Save
-                </button>
+                <button id="saveSketchBtn" class="pill-btn primary-btn font-bold shadow-md">Save</button>
             </div>
 
-            <!-- Drawing Sheet Wrapper -->
             <div class="canvas-canvas-sheet m-4">
                 <canvas id="paintCanvas"></canvas>
                 <button id="clearCanvasBtn" class="circle-icon-btn text-danger shadow-inner"><span class="material-icons-round">delete_sweep</span></button>
             </div>
 
-            <!-- Canvas Configuration Controls Drawer Footer -->
             <div class="canvas-controls-panel p-6 shadow-2xl">
                 <div class="slider-control-row mb-4">
                     <span class="material-icons-round slider-icon">line_weight</span>
                     <input type="range" id="brushThickness" min="2" max="35" value="6" class="custom-range-slider">
                 </div>
-                <!-- Continuous Palette Layout Row -->
                 <div class="sketch-palette-row">
                     <span class="sketch-color bg-black active-color" data-color="#000000"></span>
                     <span class="sketch-color bg-gray" data-color="#6B7280"></span>
@@ -120,7 +113,7 @@
             </div>
         </section>
 
-        <!-- APPEARANCE DOCK BOTTOM SHEET OVERLAY DRAWER -->
+        <!-- APPEARANCE SELECTION DRAWER -->
         <div id="colorSheetOverlay" class="bottom-sheet-modal hidden fade-out">
             <div id="colorSheetCard" class="bottom-sheet-card p-6 translate-down">
                 <div class="drawer-handle mb-4"></div>
@@ -138,7 +131,7 @@
             </div>
         </div>
 
-        <!-- SPEED DIAL SYSTEM EXPANDABLE DOCK BUTTON -->
+        <!-- FLOATING MASTER SPEED DIAL OVERLAY -->
         <div id="masterFabWrapper" class="action-fab-system-wrapper">
             <div id="fabMenuOptions" class="fab-options-stack hidden opacity-0 shift-down">
                 <div id="actionSketch" class="fab-option-row">
@@ -153,20 +146,6 @@
             <button id="masterFab" class="master-fab-trigger shadow-xl"><span id="fabIcon" class="material-icons-round">add</span></button>
         </div>
 
-    </div>
-
-    <div id="masterFabWrapper" class="action-fab-system-wrapper">
-        <div id="fabMenuOptions" class="fab-options-stack hidden opacity-0 shift-down">
-            <div id="actionSketch" class="fab-option-row">
-                <span class="fab-option-label">Drawing</span>
-                <button class="circle-icon-btn bg-pink shadow-md text-accent"><span class="material-icons-round">brush</span></button>
-            </div>
-            <div id="actionNewNote" class="fab-option-row">
-                <span class="fab-option-label">New Note</span>
-                <button class="circle-icon-btn bg-gold shadow-md text-gold-dark"><span class="material-icons-round">edit</span></button>
-            </div>
-        </div>
-        <button id="masterFab" class="master-fab-trigger shadow-xl"><span id="fabIcon" class="material-icons-round">add</span></button>
     </div>
 
     <script src="app.js"></script>

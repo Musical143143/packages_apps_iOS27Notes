@@ -50,7 +50,6 @@ function init() {
     initializeCanvasEngine();
     setupTodoCheckboxListener();
     
-    // Ensure the main navigation trigger starts up visible on app launch
     const wrapper = document.getElementById('masterFabWrapper');
     if (wrapper) wrapper.style.setProperty('display', 'flex', 'important');
 }
@@ -104,15 +103,13 @@ function toggleFab() {
         setTimeout(() => {
             DOM.fabMenuOptions.classList.remove('opacity-0', 'shift-down');
             DOM.fabMenuOptions.classList.add('shift-up');
-            DOM.fabIcon.textContent = 'close';
         }, 10);
     } else {
         DOM.fabMenuOptions.classList.remove('shift-up');
         DOM.fabMenuOptions.classList.add('shift-down');
         DOM.fabMenuOptions.classList.add('opacity-0');
         DOM.masterFab.classList.remove('master-fab-active');
-        DOM.fabIcon.textContent = 'add';
-        setTimeout(() => DOM.fabMenuOptions.classList.add('hidden'), 200);
+        setTimeout(() => DOM.fabMenuOptions.add('hidden'), 200);
     }
 }
 
@@ -120,7 +117,6 @@ function openEditor(noteId = null) {
     if (state.isFabOpen) toggleFab();
     state.currentNoteId = noteId;
     
-    // Smoothly hide the floating speed dial block when viewing note spaces
     const wrapper = document.getElementById('masterFabWrapper');
     if (wrapper) wrapper.style.setProperty('display', 'none', 'important');
 
@@ -178,7 +174,6 @@ function discardAndClose() {
     DOM.editorView.classList.remove('mask-up');
     DOM.editorView.classList.add('mask-down');
     
-    // Safely snap the dashboard dynamic speed dial option menu triggers back into place
     const wrapper = document.getElementById('masterFabWrapper');
     if (wrapper) wrapper.style.setProperty('display', 'flex', 'important');
 
@@ -194,14 +189,20 @@ function setupTodoCheckboxListener() {
     });
 }
 
+function syncCanvasSize() {
+    const sheet = DOM.paintCanvas.parentElement;
+    if (!sheet) return;
+    
+    // Explicitly derive pixel resolution bounds directly from runtime nodes
+    DOM.paintCanvas.width = sheet.clientWidth;
+    DOM.paintCanvas.height = sheet.clientHeight;
+    
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+}
+
 function initializeCanvasEngine() {
-    const syncSize = () => {
-        DOM.paintCanvas.width = DOM.paintCanvas.parentElement.clientWidth;
-        DOM.paintCanvas.height = DOM.paintCanvas.parentElement.clientHeight;
-        ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    };
-    window.addEventListener('resize', syncSize);
-    setTimeout(syncSize, 300);
+    window.addEventListener('resize', syncCanvasSize);
 
     const position = (e) => {
         const boundary = DOM.paintCanvas.getBoundingClientRect();
@@ -210,24 +211,30 @@ function initializeCanvasEngine() {
         return { x: clientX - boundary.left, y: clientY - boundary.top };
     };
 
-    DOM.paintCanvas.addEventListener('mousedown', (e) => { drawing = true; ctx.beginPath(); const p = position(e); ctx.moveTo(p.x, p.y); });
-    DOM.paintCanvas.addEventListener('mousemove', (e) => {
+    // Correct Touch Coordination Event Handling Triggers
+    const startDrawing = (e) => {
+        drawing = true;
+        ctx.beginPath();
+        const p = position(e);
+        ctx.moveTo(p.x, p.y);
+    };
+
+    const drawMove = (e) => {
         if (!drawing) return;
+        if (e.touches) e.preventDefault(); // Lock viewport panning while drafting sketches
         const p = position(e);
         ctx.lineWidth = DOM.brushThickness.value;
         ctx.strokeStyle = state.brushMode === 'marker' ? activePaintColor + "40" : activePaintColor;
-        ctx.lineTo(p.x, p.y); ctx.stroke();
-    });
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+    };
+
+    DOM.paintCanvas.addEventListener('mousedown', startDrawing);
+    DOM.paintCanvas.addEventListener('mousemove', drawMove);
     window.addEventListener('mouseup', () => drawing = false);
 
-    DOM.paintCanvas.addEventListener('touchstart', (e) => { drawing = true; ctx.beginPath(); const p = position(e); ctx.moveTo(p.x, p.y); });
-    DOM.paintCanvas.addEventListener('touchmove', (e) => {
-        if (!drawing) return; e.preventDefault();
-        const p = position(e);
-        ctx.lineWidth = DOM.brushThickness.value;
-        ctx.strokeStyle = state.brushMode === 'marker' ? activePaintColor + "40" : activePaintColor;
-        ctx.lineTo(p.x, p.y); ctx.stroke();
-    });
+    DOM.paintCanvas.addEventListener('touchstart', startDrawing, { passive: false });
+    DOM.paintCanvas.addEventListener('touchmove', drawMove, { passive: false });
     window.addEventListener('touchend', () => drawing = false);
 }
 
@@ -312,7 +319,7 @@ function setupEventListeners() {
         });
     });
 
-    DOM.actionSketch.addEventListener('click', () => {
+    const triggerSketchWindow = () => {
         if (state.isFabOpen) toggleFab();
         
         const wrapper = document.getElementById('masterFabWrapper');
@@ -320,17 +327,13 @@ function setupEventListeners() {
 
         DOM.sketchView.classList.remove('hidden', 'mask-down');
         DOM.sketchView.classList.add('mask-up');
-        ctx.clearRect(0, 0, DOM.paintCanvas.width, DOM.paintCanvas.height);
-    });
+        
+        // Critical: Delay size evaluation until presentation modal layout locks 
+        setTimeout(syncCanvasSize, 350);
+    };
 
-    DOM.triggerInlineSketch.addEventListener('click', () => {
-        const wrapper = document.getElementById('masterFabWrapper');
-        if (wrapper) wrapper.style.setProperty('display', 'none', 'important');
-
-        DOM.sketchView.classList.remove('hidden', 'mask-down');
-        DOM.sketchView.classList.add('mask-up');
-        ctx.clearRect(0, 0, DOM.paintCanvas.width, DOM.paintCanvas.height);
-    });
+    DOM.actionSketch.addEventListener('click', triggerSketchWindow);
+    DOM.triggerInlineSketch.addEventListener('click', triggerSketchWindow);
 
     DOM.closeSketchBtn.addEventListener('click', () => {
         DOM.sketchView.classList.remove('mask-up');
