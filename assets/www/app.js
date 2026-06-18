@@ -263,7 +263,7 @@ function handleSpeakingEngine() {
 }
 
 function stopSpeakingEngine() {
-    const syn = window.speechSynthesis || window.webkitSpeechSynthesis;
+    const syn = window.speechSynthesis || window.webkitSynthesis;
     if (syn) syn.cancel();
     DOM.speakBtn.style.setProperty('background-color', '#F5EBE8', 'important');
 }
@@ -377,7 +377,7 @@ function setupEventListeners() {
     DOM.speakBtn.addEventListener('click', handleSpeakingEngine);
     DOM.exportBtn.addEventListener('click', handleExportEngine);
 
-    // 🎨 GLOBAL DELEGATION ENGINE: Guarantees modal opens and clicks trigger cleanly
+    // 🎨 FIXED GLOBAL DELEGATION TARGET WITH CLASSLIST TYPO RESETS
     document.addEventListener('click', (e) => {
         const paletteBtn = e.target.closest('#colorPaletteToggle') || e.target.closest('.accent-btn');
         if (paletteBtn) {
@@ -418,7 +418,8 @@ function setupEventListeners() {
             DOM.colorSheetCard.classList.remove('translate-up');
             DOM.colorSheetCard.classList.add('translate-down');
             DOM.colorSheetOverlay.classList.remove('fade-in');
-            setTimeout(() => DOM.colorSheetOverlay.add('hidden'), 300);
+            // Fixed typo: Added .classList back into clear transition loop
+            setTimeout(() => DOM.colorSheetOverlay.classList.add('hidden'), 300);
         }
     });
 
