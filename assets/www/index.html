@@ -9,46 +9,114 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-black text-white antialiased selection:bg-yellow-500/30 select-none">
+<body id="appBody" class="bg-black text-white antialiased select-none ios-mesh-bg">
 
-    <div id="app" class="relative min-h-screen pb-24 overflow-x-hidden">
+    <div id="app" class="relative min-h-screen pb-24">
         
-        <section id="listView" class="p-6 pt-12 max-w-md mx-auto transition-all duration-300 ease-out">
+        <section id="listView" class="p-6 pt-12 max-w-md mx-auto transition-all duration-300">
             <div class="flex justify-between items-center mb-6">
                 <h1 class="text-4xl font-bold tracking-tight">Notes</h1>
-                <div class="flex gap-4 text-yellow-500">
-                    <span class="material-icons-round text-2xl cursor-pointer hover:opacity-70">more_horiz</span>
+                <div class="flex gap-4 text-[#EAB308]">
+                    <span class="material-icons-round text-2xl cursor-pointer">more_horiz</span>
                 </div>
             </div>
 
             <div class="relative mb-6">
                 <span class="material-icons-round absolute left-3 top-2.5 text-gray-500 text-xl">search</span>
-                <input type="text" id="searchBar" placeholder="Search" class="w-full bg-[#1c1c1e] pl-10 pr-4 py-2 rounded-xl text-[17px] text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-500/50 transition-all">
+                <input type="text" id="searchBar" placeholder="Search entries..." class="w-full bg-white/10 backdrop-blur-md pl-10 pr-4 py-2 rounded-xl text-[17px] text-gray-200 placeholder-gray-500 focus:outline-none">
             </div>
 
-            <div id="notesContainer" class="bg-[#1c1c1e] rounded-2xl overflow-hidden divide-y divide-[#2c2c2e]">
-                </div>
+            <div id="notesContainer" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden divide-y divide-white/10 shadow-2xl"></div>
+
+            <div id="emptyState" class="flex flex-col items-center justify-center mt-36">
+                <span class="material-icons-round text-5xl text-gray-600 mb-2">description</span>
+                <p class="text-gray-500 font-medium">No Notes</p>
+            </div>
         </section>
 
         <section id="editorView" class="fixed inset-0 bg-black z-50 transform translate-x-full transition-transform duration-300 ease-in-out p-6 pt-12 flex flex-col hidden">
             <div class="flex justify-between items-center mb-4">
-                <button id="backBtn" class="flex items-center text-yellow-500 font-medium text-[17px] focus:outline-none">
+                <button id="backBtn" class="flex items-center text-[#EAB308] font-medium text-[17px] focus:outline-none">
                     <span class="material-icons-round text-2xl">chevron_left</span> Notes
                 </button>
-                <button id="saveBtn" class="text-yellow-500 font-semibold text-[17px] focus:outline-none opacity-40 pointer-events-none transition-opacity">Done</button>
+                <div class="flex gap-4 items-center">
+                    <button id="speakBtn" class="text-gray-400 focus:outline-none"><span class="material-icons-round">volume_up</span></button>
+                    <button id="exportBtn" class="text-gray-400 focus:outline-none"><span class="material-icons-round">file_download</span></button>
+                    <button id="colorPaletteToggle" class="text-[#EAB308] focus:outline-none"><span class="material-icons-round">palette</span></button>
+                    <button id="saveBtn" class="text-[#EAB308] font-semibold text-[17px] focus:outline-none opacity-40 pointer-events-none">Done</button>
+                </div>
             </div>
 
-            <div id="editorTimestamp" class="text-center text-xs text-gray-500 mb-4 tracking-wide font-medium"></div>
+            <div class="flex justify-center gap-4 text-xs text-gray-500 mb-4 tracking-wide font-medium border-b border-white/5 pb-2">
+                <span id="editorTimestamp"></span>
+                <span>•</span>
+                <span id="liveMetrics">0w 0c</span>
+            </div>
 
-            <div class="flex-1 flex flex-col gap-2">
+            <div class="flex-1 flex flex-col gap-2 overflow-y-auto mb-2">
                 <input type="text" id="noteTitle" placeholder="Title" class="w-full bg-transparent text-2xl font-bold placeholder-gray-700 focus:outline-none text-white">
-                <textarea id="noteBody" placeholder="Start writing..." class="w-full flex-1 bg-transparent text-[17px] leading-relaxed placeholder-gray-700 focus:outline-none resize-none text-gray-200"></textarea>
+                <div id="noteBody" contenteditable="true" data-placeholder="Start writing..." class="w-full flex-1 bg-transparent text-[17px] leading-relaxed focus:outline-none text-gray-200 min-h-[200px]"></div>
+            </div>
+
+            <div class="bg-white/10 backdrop-blur-2xl border border-white/10 px-3 py-1.5 flex justify-around items-center max-w-md mx-auto w-full rounded-2xl shadow-xl gap-1">
+                <button onclick="formatDoc('bold')" class="w-9 h-9 font-bold text-md text-white hover:bg-white/10 rounded-xl">B</button>
+                <button onclick="formatDoc('italic')" class="w-9 h-9 italic text-md text-white hover:bg-white/10 rounded-xl">I</button>
+                <button onclick="formatDoc('underline')" class="w-9 h-9 underline text-md text-white hover:bg-white/10 rounded-xl">U</button>
+                <button onclick="formatDoc('strikeThrough')" class="w-9 h-9 line-through text-md text-white hover:bg-white/10 rounded-xl">S</button>
+                <button id="insertTodoBtn" class="w-9 h-9 text-[#EAB308] flex items-center justify-center hover:bg-white/10 rounded-xl"><span class="material-icons-round text-xl">check_box</span></button>
+                <div class="w-[1px] h-6 bg-white/10"></div>
+                <button id="triggerInlineSketch" class="w-9 h-9 text-white flex items-center justify-center hover:bg-white/10 rounded-xl"><span class="material-icons-round text-xl">draw</span></button>
             </div>
         </section>
 
-        <footer class="fixed bottom-0 left-0 right-0 h-20 bg-[#121212]/60 backdrop-blur-xl border-t border-white/10 px-8 flex justify-between items-center z-40">
-            <div id="noteCount" class="text-xs text-gray-400 font-medium">0 Notes</div>
-            <button id="newNoteBtn" class="bg-transparent text-yellow-500 p-2 active:scale-95 transition-transform focus:outline-none">
+        <section id="sketchView" class="fixed inset-0 bg-black z-50 transform translate-y-full transition-transform duration-300 flex flex-col hidden">
+            <div class="p-6 pt-12 flex justify-between items-center border-b border-white/10 bg-black">
+                <button id="closeSketchBtn" class="text-[#EAB308] text-[17px] font-medium flex items-center"><span class="material-icons-round">chevron_left</span> Cancel</button>
+                <div class="flex gap-4 bg-white/5 px-3 py-1.5 rounded-full" id="brushModeContainer">
+                    <button id="penModeBtn" class="text-[#EAB308] text-xs font-semibold px-2.5 py-1 bg-white/10 rounded-full">Solid Pen</button>
+                    <button id="markerModeBtn" class="text-gray-400 text-xs font-semibold px-2.5 py-1 rounded-full">Highlighter</button>
+                </div>
+                <button id="saveSketchBtn" class="text-[#EAB308] text-[17px] font-semibold">Done</button>
+            </div>
+
+            <div class="flex-1 relative bg-[#1c1c1e] m-4 rounded-2xl overflow-hidden">
+                <canvas id="paintCanvas" class="absolute inset-0 w-full h-full"></canvas>
+                <button id="clearCanvasBtn" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/40 flex items-center justify-center text-red-500"><span class="material-icons-round">delete</span></button>
+            </div>
+
+            <div class="bg-[#1c1c1e] p-6 rounded-t-3xl border-t border-white/5 flex flex-col gap-4">
+                <div class="flex items-center gap-4">
+                    <span class="material-icons-round text-gray-500 text-sm">line_weight</span>
+                    <input type="range" id="brushThickness" min="2" max="35" value="6" class="flex-1 accent-[#EAB308]">
+                </div>
+                <div class="flex gap-4 overflow-x-auto py-1">
+                    <span class="sketch-color w-9 h-9 rounded-full bg-white shrink-0 cursor-pointer" data-color="#FFFFFF"></span>
+                    <span class="sketch-color w-9 h-9 rounded-full bg-gray-500 shrink-0 cursor-pointer" data-color="#6B7280"></span>
+                    <span class="sketch-color w-9 h-9 rounded-full bg-red-500 shrink-0 cursor-pointer active-color" data-color="#EF4444"></span>
+                    <span class="sketch-color w-9 h-9 rounded-full bg-yellow-500 shrink-0 cursor-pointer" data-color="#EAB308"></span>
+                    <span class="sketch-color w-9 h-9 rounded-full bg-green-500 shrink-0 cursor-pointer" data-color="#22C55E"></span>
+                    <span class="sketch-color w-9 h-9 rounded-full bg-blue-500 shrink-0 cursor-pointer" data-color="#3B82F6"></span>
+                </div>
+            </div>
+        </section>
+
+        <div id="colorSheetOverlay" class="fixed inset-0 bg-black/60 z-50 hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm">
+            <div id="colorSheetCard" class="absolute bottom-0 left-0 right-0 bg-[#1c1c1e] border-t border-white/10 rounded-t-3xl p-6 transform translate-y-full transition-transform duration-300 max-w-md mx-auto">
+                <div class="w-10 h-1 bg-gray-600 rounded-full mx-auto mb-4"></div>
+                <h3 class="text-lg font-semibold text-center text-white mb-6">Appearance Color</h3>
+                <div class="grid grid-cols-5 gap-4 mb-4">
+                    <button class="sheet-color-btn w-12 h-12 rounded-full bg-black border-2 border-[#EAB308] flex items-center justify-center text-[#EAB308]" data-bg="#000000"><span class="material-icons-round text-sm">check</span></button>
+                    <button class="sheet-color-btn w-12 h-12 rounded-full bg-[#1c1a24]" data-bg="#1c1a24"></button>
+                    <button class="sheet-color-btn w-12 h-12 rounded-full bg-[#141b29]" data-bg="#141b29"></button>
+                    <button class="sheet-color-btn w-12 h-12 rounded-full bg-[#1c241b]" data-bg="#1c241b"></button>
+                    <button class="sheet-color-btn w-12 h-12 rounded-full bg-[#291c14]" data-bg="#291c14"></button>
+                </div>
+            </div>
+        </div>
+
+        <footer class="fixed bottom-0 left-0 right-0 h-20 bg-black/40 backdrop-blur-2xl border-t border-white/10 px-6 flex justify-between items-center z-40">
+            <div id="noteCount" class="text-xs text-gray-400 font-medium mx-auto">0 Notes</div>
+            <button id="newNoteBtn" class="absolute right-6 text-[#EAB308] p-2 active:scale-95 transition-transform">
                 <span class="material-icons-round text-3xl">edit_note</span>
             </button>
         </footer>
