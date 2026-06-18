@@ -142,7 +142,21 @@ body, html {
 #noteBody { width: 100%; flex: 1; border: none; outline: none; background: transparent; font-size: 17px; line-height: 1.6; color: #4A3530; min-height: 150px; }
 #noteBody:empty:before { content: attr(data-placeholder); color: #CDAFA9; }
 
-.formatting-ribbon { background-color: #FFF0EC; border: 1px solid #F5EBE8; padding: 6px 12px; display: flex; justify-content: space-around; align-items: center; border-radius: 24px; box-shadow: 0 4px 14px rgba(138, 74, 59, 0.04); max-width: 400px; width: 100%; margin: 8px auto 0 auto; flex-shrink: 0; }
+/* 🌟 FIXED: RAISABLE BOTTOM CLEARANCE GAP TO LIFT RIBBON UP 🌟 */
+.formatting-ribbon { 
+    background-color: #FFF0EC; 
+    border: 1px solid #F5EBE8; 
+    padding: 6px 12px; 
+    display: flex; 
+    justify-content: space-around; 
+    align-items: center; 
+    border-radius: 24px; 
+    box-shadow: 0 4px 14px rgba(138, 74, 59, 0.04); 
+    max-width: 400px; 
+    width: 100%; 
+    margin: 8px auto 16px auto !important; /* Raised bottom constraint from 0 to 16px */
+    flex-shrink: 0; 
+}
 .format-btn { background: none; border: none; outline: none; font-size: 17px; color: #2C1A16; width: 40px; height: 40px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 .format-btn:hover { background-color: #FCDCD5; }
 .special-btn { color: #8A4A3B; }
@@ -165,7 +179,6 @@ body, html {
 .toggle-pill-item { border: none; outline: none; font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 20px; background: none; color: #70554F; cursor: pointer; }
 .active-pill { background-color: #FFFFFF; color: #8A4A3B; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
 
-/* 🌟 FIXED: SAFE CANVAS VIEWPORT CONTAINER TO SOLVE CUTOUTS 🌟 */
 .canvas-canvas-sheet { 
     height: calc(100vh - 220px) !important;
     background-color: #FFFFFF; 
@@ -178,13 +191,12 @@ body, html {
 .canvas-canvas-sheet canvas { width: 100% !important; height: 100% !important; display: block !important; touch-action: none; }
 #clearCanvasBtn { position: absolute; top: 16px; right: 16px; background-color: #FFF0EC; border: 1px solid #FCDCD5; color: #DC2626; z-index: 10; }
 
-/* 🌟 FIXED: ANCHORED STABLE CONTROLS PANEL FOOTER 🌟 */
 .canvas-controls-panel { 
     background-color: #FFF0EC; 
     border-top: 1px solid #F5EBE8; 
     border-radius: 32px 32px 0 0; 
     flex-shrink: 0;
-    padding: 16px 24px 28px 24px !important; /* Extra padding clears system navigation pill */
+    padding: 16px 24px 28px 24px !important; 
 }
 .slider-control-row { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
 .slider-icon { color: #70554F; font-size: 20px; }
@@ -194,7 +206,6 @@ body, html {
 .sketch-palette-row { display: flex; gap: 14px; overflow-x: auto; padding: 6px 2px; align-items: center; }
 .sketch-palette-row::-webkit-scrollbar { display: none; }
 
-/* 🌟 FIXED COLOR HOOKS: ACCENT RADIUS AND HIGH CONTRAST ACTIVE INDICATORS 🌟 */
 .sketch-color { 
     width: 36px; 
     height: 36px; 
@@ -203,14 +214,13 @@ body, html {
     box-shadow: inset 0 0 0 2px rgba(0,0,0,0.05); 
     flex-shrink: 0;
     transition: transform 0.15s ease, border-color 0.15s ease;
-    border: 3px solid #FFF0EC !important; /* Matches panel background for an elegant spacing gap */
+    border: 3px solid #FFF0EC !important; 
 }
 .active-color { 
-    border-color: #8A4A3B !important; /* Thick contrast circle ring */
+    border-color: #8A4A3B !important; 
     transform: scale(1.15); 
 }
 
-/* Hardcoded high contrast palette variables */
 .bg-black { background-color: #1A1A1A !important; } 
 .bg-gray { background-color: #786F6C !important; } 
 .bg-red { background-color: #E03E3E !important; }
@@ -231,9 +241,6 @@ body, html {
 .c-bg-default { background-color: #FFF8F6; } .c-bg-pink { background-color: #FCECEB; } .c-bg-orange { background-color: #FBF0E3; }
 .c-bg-yellow { background-color: #FBF5E3; } .c-bg-green { background-color: #EBFCEE; } .c-bg-cyan { background-color: #EBF9FC; }
 .c-bg-purple { background-color: #EEEDFC; } .c-bg-rose { background-color: #FCEEFC; }
-
-.fade-in { opacity: 1 !important; } .fade-out { opacity: 0; }
-.translate-up { transform: translateY(0) !important; } .translate-down { transform: translateY(100%); }
 
 .action-fab-system-wrapper { position: fixed !important; bottom: 24px !important; right: 24px !important; display: flex !important; flex-direction: column !important; align-items: flex-end !important; gap: 12px !important; z-index: 99 !important; width: auto !important; height: auto !important; }
 .fab-options-stack { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; transition: opacity 0.15s ease, transform 0.15s ease; }
