@@ -40,36 +40,35 @@
 
         <section id="editorView" class="view-panel fixed-view hidden mask-down">
             <div class="editor-header mb-4">
-                <button id="backBtn" class="pill-btn secondary-btn">
-                    <span class="icon icon-back"></span> Back
+                <button id="backBtn" class="circle-icon-btn transparent-btn">
+                    <span class="icon icon-back-arrow"></span>
                 </button>
                 <div class="header-utility-cluster">
-                    <button id="speakBtn" class="circle-icon-btn"><span class="icon icon-speak"></span></button>
-                    <button id="exportBtn" class="circle-icon-btn"><span class="icon icon-export"></span></button>
-                    <button id="colorPaletteToggle" class="circle-icon-btn accent-btn"><span class="icon icon-palette"></span></button>
-                    <button id="deleteNoteBtn" class="circle-icon-btn danger-btn hidden"><span class="icon icon-delete"></span></button>
-                    <button id="saveBtn" class="pill-btn primary-btn disabled-state">Done</button>
+                    <button id="speakBtn" class="circle-icon-btn hidden"><span class="icon icon-speak"></span></button>
+                    <button id="exportBtn" class="circle-icon-btn hidden"><span class="icon icon-export"></span></button>
+                    <button id="deleteNoteBtn" class="circle-icon-btn hidden"><span class="icon icon-delete"></span></button>
+                    <button id="toggleRibbonBtn" class="circle-icon-btn font-toggle-btn"><span class="icon icon-tt"></span></button>
+                    <button id="colorPaletteToggle" class="circle-icon-btn palette-wheel-btn"><span class="icon icon-palette-wheel"></span></button>
                 </div>
             </div>
 
-            <div class="metrics-hud mb-4">
-                <span id="editorTimestamp"></span>
-                <span id="liveMetrics" class="metric-pill">0w 0c</span>
-            </div>
-
-            <div class="editor-body-wrapper">
+            <div class="editor-scroll-container">
                 <input type="text" id="noteTitle" placeholder="Title">
+                
+                <div id="formattingRibbon" class="floating-formatting-ribbon">
+                    <button onclick="formatDoc('bold')" class="ribbon-btn font-bold">B</button>
+                    <button onclick="formatDoc('italic')" class="ribbon-btn font-italic">I</button>
+                    <button onclick="formatDoc('underline')" class="ribbon-btn font-underline">U</button>
+                    <button id="insertTodoBtn" class="ribbon-btn"><span class="icon icon-todo-dark"></span></button>
+                    <button id="triggerInlineSketch" class="ribbon-btn"><span class="icon icon-draw-dark"></span></button>
+                </div>
+
                 <div id="noteBody" contenteditable="true" data-placeholder="Start typing your note..."></div>
             </div>
-
-            <div class="formatting-ribbon">
-                <button onclick="formatDoc('bold')" class="format-btn font-bold">B</button>
-                <button onclick="formatDoc('italic')" class="format-btn font-italic">I</button>
-                <button onclick="formatDoc('underline')" class="format-btn font-underline">U</button>
-                <button onclick="formatDoc('strikeThrough')" class="format-btn font-strike">S</button>
-                <button id="insertTodoBtn" class="format-btn special-btn"><span class="icon icon-todo"></span></button>
-                <div class="separator-line"></div>
-                <button id="triggerInlineSketch" class="format-btn special-btn"><span class="icon icon-draw"></span></button>
+            
+            <div class="editor-bottom-hud">
+                <span id="editorTimestamp"></span>
+                <span id="liveMetrics" class="metric-pill">0w 0c</span>
             </div>
         </section>
 
@@ -106,11 +105,11 @@
         </section>
 
         <div id="colorSheetOverlay" class="bottom-sheet-modal hidden fade-out">
-            <div id="colorSheetCard" class="bottom-sheet-card p-6 translate-down">
+            <div id="colorSheetCard" class="bottom-sheet-card dark-sheet p-6 translate-down">
                 <div class="drawer-handle mb-4"></div>
-                <h3 class="sheet-title mb-6">Choose Color</h3>
+                <h3 class="sheet-title dark-text mb-6">Choose Color</h3>
                 <div class="sheet-color-grid">
-                    <button class="sheet-color-btn c-bg-default border-active" data-bg="#FFF8F6"><span class="icon icon-check"></span></button>
+                    <button class="sheet-color-btn c-bg-default border-active" data-bg="#FFF8F6"></button>
                     <button class="sheet-color-btn c-bg-pink" data-bg="#FCECEB"></button>
                     <button class="sheet-color-btn c-bg-orange" data-bg="#FBF0E3"></button>
                     <button class="sheet-color-btn c-bg-yellow" data-bg="#FBF5E3"></button>
@@ -118,6 +117,7 @@
                     <button class="sheet-color-btn c-bg-cyan" data-bg="#EBF9FC"></button>
                     <button class="sheet-color-btn c-bg-purple" data-bg="#EEEDFC"></button>
                     <button class="sheet-color-btn c-bg-rose" data-bg="#FCEEFC"></button>
+                    <button class="sheet-color-btn c-bg-pure-white" data-bg="#FFFFFF"></button>
                 </div>
             </div>
         </div>
