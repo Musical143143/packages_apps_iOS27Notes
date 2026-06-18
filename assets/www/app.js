@@ -76,7 +76,18 @@ function renderNotesList(filterQuery = '') {
             card.className = 'note-card';
             
             let displayTitle = note.title.trim() || 'Untitled';
+            
+            // Extract raw text for text snippet previews
             let displayBody = note.body.replace(/<[^>]*>/g, '').trim() || 'No additional text';
+
+            // 🌟 PARSE ENGINE: Scans document markup block for canvas sketch matches
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = note.body;
+            const firstImg = tempDiv.querySelector('img');
+            let sketchPreviewHtml = '';
+            if (firstImg && firstImg.src) {
+                sketchPreviewHtml = `<div class="card-sketch-container"><img src="${firstImg.src}" alt="Sketch"></div>`;
+            }
 
             if (filterQuery) {
                 const regex = new RegExp(`(${filterQuery})`, 'gi');
@@ -84,10 +95,17 @@ function renderNotesList(filterQuery = '') {
                 displayBody = displayBody.replace(regex, `<mark>$1</mark>`);
             }
 
+            // Construct compact visual date strings matching your system layouts
+            const noteDate = new Date(note.updatedAt).toLocaleString([], {month:'short', day:'numeric'});
+            const textContent = displayBody === 'No additional text' && sketchPreviewHtml ? '' : `<p class="note-card-text">${displayBody}</p>`;
+
             card.innerHTML = `
                 <h3>${displayTitle}</h3>
-                <div>${displayBody}</div>
+                <div class="card-metadata-chip">${noteDate}</div>
+                ${sketchPreviewHtml}
+                ${textContent}
             `;
+            
             card.addEventListener('click', () => openEditor(note.id));
             DOM.notesContainer.appendChild(card);
         });
@@ -166,7 +184,7 @@ function updateMetrics() {
     const words = txt.trim() === '' ? 0 : txt.trim().split(/\s+/).length;
     DOM.liveMetrics.textContent = `${words}w ${chars}c`;
     
-    const hasData = DOM.noteTitle.value.trim() || txt.trim();
+    const hasData = DOM.noteTitle.value.trim() || txt.trim() || DOM.noteBody.querySelector('img');
     if (hasData) {
         DOM.saveBtn.classList.remove('disabled-state');
     } else {
@@ -316,7 +334,6 @@ const triggerSketchWindow = () => {
 function setupEventListeners() {
     DOM.masterFab.addEventListener('click', toggleFab);
     
-    // Explicitly bind click interaction event maps to complete row contexts
     DOM.actionNewNote.addEventListener('click', () => openEditor(null));
     DOM.actionSketch.addEventListener('click', triggerSketchWindow);
     
@@ -326,6 +343,7 @@ function setupEventListeners() {
     DOM.noteTitle.addEventListener('input', updateMetrics);
     DOM.noteBody.addEventListener('input', updateMetrics);
     
+    DOM.searchBar.addEventListener('click', () => resetFabStateInstantly());
     DOM.searchBar.addEventListener('input', (e) => renderNotesList(e.target.value));
 
     DOM.insertTodoBtn.addEventListener('click', () => {
@@ -392,17 +410,44 @@ function setupEventListeners() {
     DOM.clearCanvasBtn.addEventListener('click', () => ctx.clearRect(0, 0, DOM.paintCanvas.width, DOM.paintCanvas.height));
 
     DOM.saveSketchBtn.addEventListener('click', () => {
-        const imageUri = DOM.paintCanvas.toDataURL();
-        if (DOM.editorView.classList.contains('hidden')) {
-            openEditor(null);
-        } else {
+        try {
+            const imageUri = DOM.paintCanvas.toDataURL('image/png');
+            if (DOM.editorView.classList.contains('hidden')) {
+                openEditor(null);
+            }
+            
+            const sketchImage = document.createElement('img');
+            sketchImage.src = imageUri;
+            sketchImage.className = 'inserted-sketch';
+            sketchImage.style.maxWidth = '100%';
+            sketchImage.style.height = 'auto';
+            sketchImage.style.display = 'block';
+            sketchImage.style.margin = '12px 0';
+            sketchImage.style.borderRadius = '16px';
+            
             DOM.noteBody.focus();
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                range.deleteContents();
+                range.insertNode(sketchImage);
+                
+                range.setStartAfter(sketchImage);
+                range.setEndAfter(sketchImage);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            } else {
+                DOM.noteBody.appendChild(sketchImage);
+            }
+            
+            DOM.sketchView.classList.remove('mask-up');
+            DOM.sketchView.classList.add('mask-down');
+            setTimeout(() => DOM.sketchView.classList.add('hidden'), 300);
+            updateMetrics();
+            
+        } catch (error) {
+            console.error("Save Sketch Error: ", error);
         }
-        document.execCommand('insertImage', false, imageUri);
-        DOM.sketchView.classList.remove('mask-up');
-        DOM.sketchView.classList.add('mask-down');
-        setTimeout(() => DOM.sketchView.classList.add('hidden'), 300);
-        updateMetrics();
     });
 
     document.querySelectorAll('.sketch-color').forEach(dot => {
