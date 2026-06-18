@@ -391,7 +391,13 @@ function setupEventListeners() {
         DOM.penModeBtn.classList.remove('active-pill');
     });
 
-    DOM.colorPaletteToggle.addEventListener('click', () => {
+    // 🎨 FIX: Enforce clean target matching to safely reveal the bottom sheet drawer
+    DOM.colorPaletteToggle.addEventListener('click', (e) => {
+        // Stop background caret or text field focus side-effects
+        e.preventDefault();
+        e.stopPropagation();
+
+        // Reveal the overlay sheet panels cleanly
         DOM.colorSheetOverlay.classList.remove('hidden');
         setTimeout(() => {
             DOM.colorSheetOverlay.classList.add('fade-in');
@@ -399,6 +405,8 @@ function setupEventListeners() {
             DOM.colorSheetCard.classList.add('translate-up');
         }, 10);
     });
+
+
 
     DOM.colorSheetOverlay.addEventListener('click', (e) => {
         if (e.target === DOM.colorSheetOverlay) {
