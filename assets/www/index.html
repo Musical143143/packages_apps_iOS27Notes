@@ -4,56 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Welcome</title>
-    <link rel="stylesheet" href="css/material-icons.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body id="appBody" class="default-bg text-dark antialiased select-none">
 
     <div id="app">
         
-        <!-- MAIN DASHBOARD CONTENT VIEW -->
         <section id="listView" class="view-panel p-6">
-            <!-- Fixed Top Search & Action Bar Layout -->
             <div class="header-toolbar mb-4">
                 <div class="search-input-wrapper">
-                    <span class="material-icons-round search-icon">search</span>
+                    <span class="icon icon-search"></span>
                     <input type="text" id="searchBar" placeholder="Search entries...">
                 </div>
                 <div class="header-right-actions">
-                    <span class="material-icons-round action-icon">view_stream</span>
-                    <span class="material-icons-round action-icon">more_vert</span>
+                    <span class="icon icon-stream"></span>
+                    <span class="icon icon-menu"></span>
                 </div>
             </div>
 
-            <!-- Dashboard Headers -->
             <div class="brand-group mb-6">
                 <h1 class="main-title">Welcome</h1>
                 <div id="noteCount" class="sub-counter">0 notes</div>
             </div>
 
-            <!-- Notes List Grid Layer -->
             <div id="notesContainer" class="notes-grid"></div>
 
-            <!-- Centered Empty Space Frame -->
             <div id="emptyState" class="empty-state-frame">
                 <div class="illustration-circle">
-                    <span class="material-icons-round empty-icon">note_add</span>
+                    <span class="icon icon-add-note"></span>
                 </div>
                 <h2 class="empty-title">No notes yet</h2>
                 <p class="empty-text">Tap + to create your first note</p>
             </div>
         </section>
 
-        <!-- RICH TEXT NOTE EDITOR WORKSPACE -->
         <section id="editorView" class="view-panel fixed-view hidden mask-down">
             <div class="editor-header mb-4">
                 <button id="backBtn" class="pill-btn secondary-btn">
-                    <span class="material-icons-round button-icon-left">arrow_back</span> Back
+                    <span class="icon icon-back"></span> Back
                 </button>
                 <div class="header-utility-cluster">
-                    <button id="speakBtn" class="circle-icon-btn"><span class="material-icons-round">volume_up</span></button>
-                    <button id="exportBtn" class="circle-icon-btn"><span class="material-icons-round">file_download</span></button>
-                    <button id="colorPaletteToggle" class="circle-icon-btn accent-btn"><span class="material-icons-round">palette</span></button>
+                    <button id="speakBtn" class="circle-icon-btn"><span class="icon icon-speak"></span></button>
+                    <button id="exportBtn" class="circle-icon-btn"><span class="icon icon-export"></span></button>
+                    <button id="colorPaletteToggle" class="circle-icon-btn accent-btn"><span class="icon icon-palette"></span></button>
+                    <button id="deleteNoteBtn" class="circle-icon-btn danger-btn hidden"><span class="icon icon-delete"></span></button>
                     <button id="saveBtn" class="pill-btn primary-btn disabled-state">Done</button>
                 </div>
             </div>
@@ -68,19 +62,17 @@
                 <div id="noteBody" contenteditable="true" data-placeholder="Start typing your note..."></div>
             </div>
 
-            <!-- Inline Rich Text Action Toolbar -->
             <div class="formatting-ribbon">
                 <button onclick="formatDoc('bold')" class="format-btn font-bold">B</button>
                 <button onclick="formatDoc('italic')" class="format-btn font-italic">I</button>
                 <button onclick="formatDoc('underline')" class="format-btn font-underline">U</button>
                 <button onclick="formatDoc('strikeThrough')" class="format-btn font-strike">S</button>
-                <button id="insertTodoBtn" class="format-btn special-btn"><span class="material-icons-round">check_box</span></button>
+                <button id="insertTodoBtn" class="format-btn special-btn"><span class="icon icon-todo"></span></button>
                 <div class="separator-line"></div>
-                <button id="triggerInlineSketch" class="format-btn special-btn"><span class="material-icons-round">draw</span></button>
+                <button id="triggerInlineSketch" class="format-btn special-btn"><span class="icon icon-draw"></span></button>
             </div>
         </section>
 
-        <!-- INTERACTIVE CANVAS LAYER -->
         <section id="sketchView" class="view-panel fixed-view hidden mask-down sketch-layer-bg">
             <div class="sketch-header p-4">
                 <button id="closeSketchBtn" class="pill-btn secondary-btn">Cancel</button>
@@ -93,12 +85,12 @@
 
             <div class="canvas-canvas-sheet m-4">
                 <canvas id="paintCanvas"></canvas>
-                <button id="clearCanvasBtn" class="circle-icon-btn text-danger shadow-inner"><span class="material-icons-round">delete_sweep</span></button>
+                <button id="clearCanvasBtn" class="circle-icon-btn text-danger shadow-inner"><span class="icon icon-clear"></span></button>
             </div>
 
             <div class="canvas-controls-panel p-6 shadow-2xl">
                 <div class="slider-control-row mb-4">
-                    <span class="material-icons-round slider-icon">line_weight</span>
+                    <span class="icon icon-weight"></span>
                     <input type="range" id="brushThickness" min="2" max="35" value="6" class="custom-range-slider">
                 </div>
                 <div class="sketch-palette-row">
@@ -113,13 +105,12 @@
             </div>
         </section>
 
-        <!-- APPEARANCE SELECTION DRAWER -->
         <div id="colorSheetOverlay" class="bottom-sheet-modal hidden fade-out">
             <div id="colorSheetCard" class="bottom-sheet-card p-6 translate-down">
                 <div class="drawer-handle mb-4"></div>
                 <h3 class="sheet-title mb-6">Choose Color</h3>
                 <div class="sheet-color-grid">
-                    <button class="sheet-color-btn c-bg-default border-active" data-bg="#FFF8F6"><span class="material-icons-round text-sm">check</span></button>
+                    <button class="sheet-color-btn c-bg-default border-active" data-bg="#FFF8F6"><span class="icon icon-check"></span></button>
                     <button class="sheet-color-btn c-bg-pink" data-bg="#FCECEB"></button>
                     <button class="sheet-color-btn c-bg-orange" data-bg="#FBF0E3"></button>
                     <button class="sheet-color-btn c-bg-yellow" data-bg="#FBF5E3"></button>
@@ -131,19 +122,18 @@
             </div>
         </div>
 
-        <!-- FLOATING MASTER SPEED DIAL OVERLAY -->
         <div id="masterFabWrapper" class="action-fab-system-wrapper">
             <div id="fabMenuOptions" class="fab-options-stack hidden opacity-0 shift-down">
                 <div id="actionSketch" class="fab-option-row">
                     <span class="fab-option-label">Drawing</span>
-                    <button class="circle-icon-btn bg-pink shadow-md text-accent"><span class="material-icons-round">brush</span></button>
+                    <button class="circle-icon-btn bg-pink shadow-md text-accent"><span class="icon icon-brush"></span></button>
                 </div>
                 <div id="actionNewNote" class="fab-option-row">
                     <span class="fab-option-label">New Note</span>
-                    <button class="circle-icon-btn bg-gold shadow-md text-gold-dark"><span class="material-icons-round">edit</span></button>
+                    <button class="circle-icon-btn bg-gold shadow-md text-gold-dark"><span class="icon icon-edit"></span></button>
                 </div>
             </div>
-            <button id="masterFab" class="master-fab-trigger shadow-xl"><span id="fabIcon" class="material-icons-round">add</span></button>
+            <button id="masterFab" class="master-fab-trigger shadow-xl"><span id="fabIcon" class="icon icon-add"></span></button>
         </div>
 
     </div>

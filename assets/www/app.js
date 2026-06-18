@@ -19,6 +19,7 @@ const DOM = {
     sketchView: document.getElementById('sketchView'),
     backBtn: document.getElementById('backBtn'),
     saveBtn: document.getElementById('saveBtn'),
+    deleteNoteBtn: document.getElementById('deleteNoteBtn'),
     noteTitle: document.getElementById('noteTitle'),
     noteBody: document.getElementById('noteBody'),
     editorTimestamp: document.getElementById('editorTimestamp'),
@@ -129,14 +130,24 @@ function openEditor(noteId = null) {
         DOM.noteBody.innerHTML = note.body;
         state.selectedBgColor = note.bgColor || '#FFF8F6';
         DOM.editorTimestamp.textContent = new Date(note.updatedAt).toLocaleString([], {month:'short', day:'numeric', hour: '2-digit', minute:'2-digit'}).toUpperCase();
+        DOM.deleteNoteBtn.classList.remove('hidden'); // Display delete option only for saved records
     } else {
         DOM.noteTitle.value = '';
         DOM.noteBody.innerHTML = '';
         state.selectedBgColor = '#FFF8F6';
         DOM.editorTimestamp.textContent = new Date().toLocaleString([], {month:'short', day:'numeric', hour: '2-digit', minute:'2-digit'}).toUpperCase();
+        DOM.deleteNoteBtn.classList.add('hidden');
     }
     DOM.editorView.style.backgroundColor = state.selectedBgColor;
     updateMetrics();
+}
+
+function deleteCurrentNote() {
+    if (!state.currentNoteId) return;
+    state.notes = state.notes.filter(n => n.id !== state.currentNoteId);
+    localStorage.setItem('avium_pro_offline_notes', JSON.stringify(state.notes));
+    renderNotesList(DOM.searchBar.value);
+    discardAndClose();
 }
 
 function updateMetrics() {
@@ -192,11 +203,8 @@ function setupTodoCheckboxListener() {
 function syncCanvasSize() {
     const sheet = DOM.paintCanvas.parentElement;
     if (!sheet) return;
-    
-    // Explicitly derive pixel resolution bounds directly from runtime nodes
     DOM.paintCanvas.width = sheet.clientWidth;
     DOM.paintCanvas.height = sheet.clientHeight;
-    
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
 }
@@ -211,7 +219,6 @@ function initializeCanvasEngine() {
         return { x: clientX - boundary.left, y: clientY - boundary.top };
     };
 
-    // Correct Touch Coordination Event Handling Triggers
     const startDrawing = (e) => {
         drawing = true;
         ctx.beginPath();
@@ -221,7 +228,7 @@ function initializeCanvasEngine() {
 
     const drawMove = (e) => {
         if (!drawing) return;
-        if (e.touches) e.preventDefault(); // Lock viewport panning while drafting sketches
+        if (e.touches) e.preventDefault();
         const p = position(e);
         ctx.lineWidth = DOM.brushThickness.value;
         ctx.strokeStyle = state.brushMode === 'marker' ? activePaintColor + "40" : activePaintColor;
@@ -243,6 +250,7 @@ function setupEventListeners() {
     DOM.actionNewNote.addEventListener('click', () => openEditor(null));
     DOM.backBtn.addEventListener('click', saveAndClose);
     DOM.saveBtn.addEventListener('click', saveAndClose);
+    DOM.deleteNoteBtn.addEventListener('click', deleteCurrentNote); // Bind note destruction engine hook
     DOM.noteTitle.addEventListener('input', updateMetrics);
     DOM.noteBody.addEventListener('input', updateMetrics);
     
@@ -314,21 +322,17 @@ function setupEventListeners() {
             state.selectedBgColor = btn.dataset.bg;
             DOM.editorView.style.backgroundColor = state.selectedBgColor;
             document.querySelectorAll('.sheet-color-btn').forEach(b => { b.innerHTML = ''; b.classList.remove('border-active'); });
-            btn.innerHTML = '<span class="material-icons-round text-sm">check</span>';
+            btn.innerHTML = '<span class="icon icon-check"></span>';
             btn.classList.add('border-active');
         });
     });
 
     const triggerSketchWindow = () => {
         if (state.isFabOpen) toggleFab();
-        
         const wrapper = document.getElementById('masterFabWrapper');
         if (wrapper) wrapper.style.setProperty('display', 'none', 'important');
-
         DOM.sketchView.classList.remove('hidden', 'mask-down');
         DOM.sketchView.classList.add('mask-up');
-        
-        // Critical: Delay size evaluation until presentation modal layout locks 
         setTimeout(syncCanvasSize, 350);
     };
 
@@ -338,12 +342,10 @@ function setupEventListeners() {
     DOM.closeSketchBtn.addEventListener('click', () => {
         DOM.sketchView.classList.remove('mask-up');
         DOM.sketchView.classList.add('mask-down');
-        
         if(DOM.editorView.classList.contains('hidden')) {
             const wrapper = document.getElementById('masterFabWrapper');
             if (wrapper) wrapper.style.setProperty('display', 'flex', 'important');
         }
-        
         setTimeout(() => DOM.sketchView.classList.add('hidden'), 300);
     });
 
@@ -351,13 +353,11 @@ function setupEventListeners() {
 
     DOM.saveSketchBtn.addEventListener('click', () => {
         const imageUri = DOM.paintCanvas.toDataURL();
-        
         if (DOM.editorView.classList.contains('hidden')) {
             openEditor(null);
         } else {
             DOM.noteBody.focus();
         }
-        
         document.execCommand('insertImage', false, imageUri);
         DOM.sketchView.classList.remove('mask-up');
         DOM.sketchView.classList.add('mask-down');
