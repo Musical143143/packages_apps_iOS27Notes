@@ -19,6 +19,18 @@ body {
     padding-bottom: 100px;
 }
 
+
+/* Align icon and text perfectly inside text-save components */
+#saveSketchBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 22px;
+}
+
+
+
 /* Typography Scale */
 .main-title { font-size: 36px; font-weight: 700; tracking-tight: -0.02em; color: #2C1A16; }
 .sub-counter { font-size: 15px; color: #A0857F; font-weight: 500; margin-top: 2px; }
