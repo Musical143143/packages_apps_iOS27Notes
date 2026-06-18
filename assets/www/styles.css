@@ -290,3 +290,38 @@ body {
 
 /* Global markup auto highlights */
 mark { background-color: rgba(138, 74, 59, 0.2); color: #2C1A16; font-weight: 600; padding: 0 2px; border-radius: 3px; }
+
+/* Prevent Header/Footer Toolbar Overlaps */
+.editor-header, .header-toolbar, .sketch-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 8px;
+}
+
+.header-utility-cluster {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Hide raw text strings if font takes a microsecond to load */
+.material-icons-round {
+    text-indent: -9999px;
+    position: relative;
+}
+.material-icons-round::before {
+    text-indent: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+
+/* Fix the floating master FAB trigger from overlapping the ribbon */
+.action-fab-system-wrapper {
+    display: none !important; /* Hides the homepage '+' FAB inside the active editor view */
+}
