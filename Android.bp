@@ -1,0 +1,13 @@
+android_app {
+    name: "iOS27Notes",
+    srcs: ["src/**/*.java"],
+    asset_dirs: ["assets"],
+    resource_dirs: ["res"],
+    manifest: "AndroidManifest.xml",
+    sdk_version: "current",
+    product_specific: true,
+    certificate: "platform",
+    optimize: {
+        enabled: false,
+    },
+}

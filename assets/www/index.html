@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Notes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-black text-white antialiased selection:bg-yellow-500/30 select-none">
+
+    <div id="app" class="relative min-h-screen pb-24 overflow-x-hidden">
+        
+        <section id="listView" class="p-6 pt-12 max-w-md mx-auto transition-all duration-300 ease-out">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-4xl font-bold tracking-tight">Notes</h1>
+                <div class="flex gap-4 text-yellow-500">
+                    <span class="material-icons-round text-2xl cursor-pointer hover:opacity-70">more_horiz</span>
+                </div>
+            </div>
+
+            <div class="relative mb-6">
+                <span class="material-icons-round absolute left-3 top-2.5 text-gray-500 text-xl">search</span>
+                <input type="text" id="searchBar" placeholder="Search" class="w-full bg-[#1c1c1e] pl-10 pr-4 py-2 rounded-xl text-[17px] text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-500/50 transition-all">
+            </div>
+
+            <div id="notesContainer" class="bg-[#1c1c1e] rounded-2xl overflow-hidden divide-y divide-[#2c2c2e]">
+                </div>
+        </section>
+
+        <section id="editorView" class="fixed inset-0 bg-black z-50 transform translate-x-full transition-transform duration-300 ease-in-out p-6 pt-12 flex flex-col hidden">
+            <div class="flex justify-between items-center mb-4">
+                <button id="backBtn" class="flex items-center text-yellow-500 font-medium text-[17px] focus:outline-none">
+                    <span class="material-icons-round text-2xl">chevron_left</span> Notes
+                </button>
+                <button id="saveBtn" class="text-yellow-500 font-semibold text-[17px] focus:outline-none opacity-40 pointer-events-none transition-opacity">Done</button>
+            </div>
+
+            <div id="editorTimestamp" class="text-center text-xs text-gray-500 mb-4 tracking-wide font-medium"></div>
+
+            <div class="flex-1 flex flex-col gap-2">
+                <input type="text" id="noteTitle" placeholder="Title" class="w-full bg-transparent text-2xl font-bold placeholder-gray-700 focus:outline-none text-white">
+                <textarea id="noteBody" placeholder="Start writing..." class="w-full flex-1 bg-transparent text-[17px] leading-relaxed placeholder-gray-700 focus:outline-none resize-none text-gray-200"></textarea>
+            </div>
+        </section>
+
+        <footer class="fixed bottom-0 left-0 right-0 h-20 bg-[#121212]/60 backdrop-blur-xl border-t border-white/10 px-8 flex justify-between items-center z-40">
+            <div id="noteCount" class="text-xs text-gray-400 font-medium">0 Notes</div>
+            <button id="newNoteBtn" class="bg-transparent text-yellow-500 p-2 active:scale-95 transition-transform focus:outline-none">
+                <span class="material-icons-round text-3xl">edit_note</span>
+            </button>
+        </footer>
+
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
