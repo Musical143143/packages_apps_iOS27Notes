@@ -1,15 +1,20 @@
 const state = {
-    notes: JSON.parse(localStorage.getItem('ios27_pro_notes')) || [],
+    notes: JSON.parse(localStorage.getItem('avium_pro_offline_notes')) || [],
     currentNoteId: null,
-    selectedBgColor: '#000000',
-    brushMode: 'solid' // solid | marker
+    isFabOpen: false,
+    selectedBgColor: '#FFF8F6',
+    brushMode: 'solid'
 };
 
 const DOM = {
     notesContainer: document.getElementById('notesContainer'),
     emptyState: document.getElementById('emptyState'),
     noteCount: document.getElementById('noteCount'),
-    newNoteBtn: document.getElementById('newNoteBtn'),
+    masterFab: document.getElementById('masterFab'),
+    fabIcon: document.getElementById('fabIcon'),
+    fabMenuOptions: document.getElementById('fabMenuOptions'),
+    actionNewNote: document.getElementById('actionNewNote'),
+    actionSketch: document.getElementById('actionSketch'),
     editorView: document.getElementById('editorView'),
     sketchView: document.getElementById('sketchView'),
     backBtn: document.getElementById('backBtn'),
@@ -37,7 +42,7 @@ const DOM = {
 
 let ctx = DOM.paintCanvas.getContext('2d');
 let drawing = false;
-let activePaintColor = '#EAB308';
+let activePaintColor = '#EF4444';
 
 function init() {
     renderNotesList();
@@ -57,55 +62,72 @@ function renderNotesList(filterQuery = '') {
         n.body.toLowerCase().includes(filterQuery.toLowerCase())
     );
 
-    DOM.noteCount.textContent = `${targetNotes.length} ${targetNotes.length === 1 ? 'Note' : 'Notes'}`;
+    DOM.noteCount.textContent = `${targetNotes.length} ${targetNotes.length === 1 ? 'note' : 'notes'}`;
 
     if (targetNotes.length === 0) {
         DOM.emptyState.classList.remove('hidden');
     } else {
         DOM.emptyState.classList.add('hidden');
         [...targetNotes].sort((a, b) => b.updatedAt - a.updatedAt).forEach(note => {
-            const row = document.createElement('div');
-            row.className = 'note-item p-4 cursor-pointer flex flex-col gap-0.5';
+            const card = document.createElement('div');
+            card.style.backgroundColor = note.bgColor || '#FFF0EC';
+            card.className = 'note-card';
             
-            let displayTitle = note.title.trim() || 'New Note';
+            let displayTitle = note.title.trim() || 'Untitled';
             let displayBody = note.body.replace(/<[^>]*>/g, '').trim() || 'No additional text';
 
             if (filterQuery) {
                 const regex = new RegExp(`(${filterQuery})`, 'gi');
-                displayTitle = displayTitle.replace(regex, `<mark class="bg-[#EAB308]/40 text-white font-semibold rounded-sm">$1</mark>`);
-                displayBody = displayBody.replace(regex, `<mark class="bg-[#EAB308]/40 text-white rounded-sm">$1</mark>`);
+                displayTitle = displayTitle.replace(regex, `<mark>$1</mark>`);
+                displayBody = displayBody.replace(regex, `<mark>$1</mark>`);
             }
 
-            const stamp = new Date(note.updatedAt).toLocaleDateString(undefined, { month: 'numeric', day: 'numeric', year: '2-digit' });
-
-            row.innerHTML = `
-                <h3 class="text-[17px] font-semibold text-white truncate">${displayTitle}</h3>
-                <div class="flex items-center gap-2 text-[15px] text-gray-400">
-                    <span class="text-gray-500 font-light shrink-0">${stamp}</span>
-                    <span class="truncate">${displayBody}</span>
-                </div>
+            card.innerHTML = `
+                <h3>${displayTitle}</h3>
+                <div>${displayBody}</div>
             `;
-            row.addEventListener('click', () => openEditor(note.id));
-            DOM.notesContainer.appendChild(row);
+            card.addEventListener('click', () => openEditor(note.id));
+            DOM.notesContainer.appendChild(card);
         });
     }
 }
 
+function toggleFab() {
+    state.isFabOpen = !state.isFabOpen;
+    if (state.isFabOpen) {
+        DOM.fabMenuOptions.classList.remove('hidden');
+        DOM.masterFab.classList.add('master-fab-active');
+        setTimeout(() => {
+            DOM.fabMenuOptions.classList.remove('opacity-0', 'shift-down');
+            DOM.fabMenuOptions.classList.add('shift-up');
+            DOM.fabIcon.textContent = 'close';
+        }, 10);
+    } else {
+        DOM.fabMenuOptions.classList.remove('shift-up');
+        DOM.fabMenuOptions.classList.add('shift-down');
+        DOM.fabMenuOptions.classList.add('opacity-0');
+        DOM.masterFab.classList.remove('master-fab-active');
+        DOM.fabIcon.textContent = 'add';
+        setTimeout(() => DOM.fabMenuOptions.classList.add('hidden'), 200);
+    }
+}
+
 function openEditor(noteId = null) {
+    if (state.isFabOpen) toggleFab();
     state.currentNoteId = noteId;
-    DOM.editorView.classList.remove('hidden', 'slide-out-right');
-    DOM.editorView.classList.add('slide-in-right');
+    DOM.editorView.classList.remove('hidden', 'mask-down');
+    setTimeout(() => DOM.editorView.classList.add('mask-up'), 10);
 
     if (noteId) {
         const note = state.notes.find(n => n.id === noteId);
         DOM.noteTitle.value = note.title;
         DOM.noteBody.innerHTML = note.body;
-        state.selectedBgColor = note.bgColor || '#000000';
+        state.selectedBgColor = note.bgColor || '#FFF8F6';
         DOM.editorTimestamp.textContent = new Date(note.updatedAt).toLocaleString([], {month:'short', day:'numeric', hour: '2-digit', minute:'2-digit'}).toUpperCase();
     } else {
         DOM.noteTitle.value = '';
         DOM.noteBody.innerHTML = '';
-        state.selectedBgColor = '#000000';
+        state.selectedBgColor = '#FFF8F6';
         DOM.editorTimestamp.textContent = new Date().toLocaleString([], {month:'short', day:'numeric', hour: '2-digit', minute:'2-digit'}).toUpperCase();
     }
     DOM.editorView.style.backgroundColor = state.selectedBgColor;
@@ -119,7 +141,11 @@ function updateMetrics() {
     DOM.liveMetrics.textContent = `${words}w ${chars}c`;
     
     const hasData = DOM.noteTitle.value.trim() || txt.trim();
-    hasData ? DOM.saveBtn.classList.remove('opacity-40', 'pointer-events-none') : DOM.saveBtn.classList.add('opacity-40', 'pointer-events-none');
+    if (hasData) {
+        DOM.saveBtn.classList.remove('disabled-state');
+    } else {
+        DOM.saveBtn.classList.add('disabled-state');
+    }
 }
 
 function saveAndClose() {
@@ -131,16 +157,17 @@ function saveAndClose() {
         const note = state.notes.find(n => n.id === state.currentNoteId);
         note.title = title; note.body = body; note.bgColor = state.selectedBgColor; note.updatedAt = Date.now();
     } else {
-        state.notes.push({ id: 'ios_' + Date.now(), title, body, bgColor: state.selectedBgColor, updatedAt: Date.now() });
+        state.notes.push({ id: 'avium_' + Date.now(), title, body, bgColor: state.selectedBgColor, updatedAt: Date.now() });
     }
-    localStorage.setItem('ios27_pro_notes', JSON.stringify(state.notes));
+    localStorage.setItem('avium_pro_offline_notes', JSON.stringify(state.notes));
     renderNotesList(DOM.searchBar.value);
     discardAndClose();
 }
 
 function discardAndClose() {
     if (window.speechSynthesis) window.speechSynthesis.cancel();
-    DOM.editorView.classList.add('slide-out-right');
+    DOM.editorView.classList.remove('mask-up');
+    DOM.editorView.classList.add('mask-down');
     setTimeout(() => DOM.editorView.classList.add('hidden'), 300);
 }
 
@@ -148,7 +175,6 @@ function setupTodoCheckboxListener() {
     DOM.noteBody.addEventListener('click', (e) => {
         if (e.target.classList.contains('todo-checkbox')) {
             e.target.classList.toggle('checked');
-            // Force content editable change registration context
             updateMetrics();
         }
     });
@@ -175,15 +201,7 @@ function initializeCanvasEngine() {
         if (!drawing) return;
         const p = position(e);
         ctx.lineWidth = DOM.brushThickness.value;
-        
-        if (state.brushMode === 'marker') {
-            ctx.strokeStyle = activePaintColor + "40"; // 25% Alpha dynamic translucency opacities
-            ctx.globalCompositeOperation = 'source-over';
-        } else {
-            ctx.strokeStyle = activePaintColor;
-            ctx.globalCompositeOperation = 'source-over';
-        }
-        
+        ctx.strokeStyle = state.brushMode === 'marker' ? activePaintColor + "40" : activePaintColor;
         ctx.lineTo(p.x, p.y); ctx.stroke();
     });
     window.addEventListener('mouseup', () => drawing = false);
@@ -200,40 +218,36 @@ function initializeCanvasEngine() {
 }
 
 function setupEventListeners() {
-    DOM.newNoteBtn.addEventListener('click', () => openEditor(null));
+    DOM.masterFab.addEventListener('click', toggleFab);
+    DOM.actionNewNote.addEventListener('click', () => openEditor(null));
     DOM.backBtn.addEventListener('click', saveAndClose);
     DOM.saveBtn.addEventListener('click', saveAndClose);
     DOM.noteTitle.addEventListener('input', updateMetrics);
     DOM.noteBody.addEventListener('input', updateMetrics);
     
-    // Live Highlight Filtering
     DOM.searchBar.addEventListener('input', (e) => renderNotesList(e.target.value));
 
-    // Dynamic Checklist Injection Function
     DOM.insertTodoBtn.addEventListener('click', () => {
         DOM.noteBody.focus();
-        const rowId = 'todo_' + Date.now();
         const todoHtml = `<div class="todo-row" contenteditable="false"><span class="todo-checkbox"></span><span class="todo-text" contenteditable="true" style="outline:none; width:100%;">Task</span></div><br>`;
         document.execCommand('insertHTML', false, todoHtml);
         updateMetrics();
     });
 
-    // Native Dictation Engine
     DOM.speakBtn.addEventListener('click', () => {
         if (window.speechSynthesis.speaking) {
             window.speechSynthesis.cancel();
-            DOM.speakBtn.classList.remove('text-[#EAB308]');
+            DOM.speakBtn.style.color = '#70554F';
         } else {
             const bodyText = DOM.noteBody.innerText || '';
             if(!bodyText.trim()) return;
             const utterance = new SpeechSynthesisUtterance(bodyText);
-            utterance.onend = () => DOM.speakBtn.classList.remove('text-[#EAB308]');
-            DOM.speakBtn.classList.add('text-[#EAB308]');
+            utterance.onend = () => DOM.speakBtn.style.color = '#70554F';
+            DOM.speakBtn.style.color = '#8A4A3B';
             window.speechSynthesis.speak(utterance);
         }
     });
 
-    // File Downloader Exporter (.txt)
     DOM.exportBtn.addEventListener('click', () => {
         const title = DOM.noteTitle.value.trim() || 'Untitled_Note';
         const rawContent = DOM.noteBody.innerText || '';
@@ -244,31 +258,32 @@ function setupEventListeners() {
         a.click();
     });
 
-    // UI/Brush Custom Switching Modes
     DOM.penModeBtn.addEventListener('click', () => {
         state.brushMode = 'solid';
-        DOM.penModeBtn.className = 'text-[#EAB308] text-xs font-semibold px-2.5 py-1 bg-white/10 rounded-full';
-        DOM.markerModeBtn.className = 'text-gray-400 text-xs font-semibold px-2.5 py-1 rounded-full';
+        DOM.penModeBtn.classList.add('active-pill');
+        DOM.markerModeBtn.classList.remove('active-pill');
     });
 
     DOM.markerModeBtn.addEventListener('click', () => {
         state.brushMode = 'marker';
-        DOM.markerModeBtn.className = 'text-[#EAB308] text-xs font-semibold px-2.5 py-1 bg-white/10 rounded-full';
-        DOM.penModeBtn.className = 'text-gray-400 text-xs font-semibold px-2.5 py-1 rounded-full';
+        DOM.markerModeBtn.classList.add('active-pill');
+        DOM.penModeBtn.classList.remove('active-pill');
     });
 
     DOM.colorPaletteToggle.addEventListener('click', () => {
         DOM.colorSheetOverlay.classList.remove('hidden');
         setTimeout(() => {
-            DOM.colorSheetOverlay.classList.remove('opacity-0');
-            DOM.colorSheetCard.classList.remove('translate-y-full');
+            DOM.colorSheetOverlay.classList.add('fade-in');
+            DOM.colorSheetCard.classList.remove('translate-down');
+            DOM.colorSheetCard.classList.add('translate-up');
         }, 10);
     });
 
     DOM.colorSheetOverlay.addEventListener('click', (e) => {
         if (e.target === DOM.colorSheetOverlay) {
-            DOM.colorSheetCard.classList.add('translate-y-full');
-            DOM.colorSheetOverlay.classList.add('opacity-0');
+            DOM.colorSheetCard.classList.remove('translate-up');
+            DOM.colorSheetCard.classList.add('translate-down');
+            DOM.colorSheetOverlay.classList.remove('fade-in');
             setTimeout(() => DOM.colorSheetOverlay.classList.add('hidden'), 300);
         }
     });
@@ -277,25 +292,40 @@ function setupEventListeners() {
         btn.addEventListener('click', () => {
             state.selectedBgColor = btn.dataset.bg;
             DOM.editorView.style.backgroundColor = state.selectedBgColor;
-            document.querySelectorAll('.sheet-color-btn').forEach(b => { b.innerHTML = ''; b.style.borderColor = 'transparent'; });
+            document.querySelectorAll('.sheet-color-btn').forEach(b => { b.innerHTML = ''; b.classList.remove('border-active'); });
             btn.innerHTML = '<span class="material-icons-round text-sm">check</span>';
-            btn.style.borderColor = '#EAB308';
+            btn.classList.add('border-active');
         });
     });
 
-    DOM.triggerInlineSketch.addEventListener('click', () => {
-        DOM.sketchView.classList.remove('hidden', 'translate-y-full');
+    DOM.actionSketch.addEventListener('click', () => {
+        if (state.isFabOpen) toggleFab();
+        DOM.sketchView.classList.remove('hidden', 'mask-down');
+        DOM.sketchView.classList.add('mask-up');
         ctx.clearRect(0, 0, DOM.paintCanvas.width, DOM.paintCanvas.height);
     });
 
-    DOM.closeSketchBtn.addEventListener('click', () => DOM.sketchView.classList.add('translate-y-full'));
+    DOM.triggerInlineSketch.addEventListener('click', () => {
+        DOM.sketchView.classList.remove('hidden', 'mask-down');
+        DOM.sketchView.classList.add('mask-up');
+        ctx.clearRect(0, 0, DOM.paintCanvas.width, DOM.paintCanvas.height);
+    });
+
+    DOM.closeSketchBtn.addEventListener('click', () => {
+        DOM.sketchView.classList.remove('mask-up');
+        DOM.sketchView.classList.add('mask-down');
+        setTimeout(() => DOM.sketchView.classList.add('hidden'), 300);
+    });
+
     DOM.clearCanvasBtn.addEventListener('click', () => ctx.clearRect(0, 0, DOM.paintCanvas.width, DOM.paintCanvas.height));
 
     DOM.saveSketchBtn.addEventListener('click', () => {
         const imageUri = DOM.paintCanvas.toDataURL();
         DOM.noteBody.focus();
         document.execCommand('insertImage', false, imageUri);
-        DOM.sketchView.classList.add('translate-y-full');
+        DOM.sketchView.classList.remove('mask-up');
+        DOM.sketchView.classList.add('mask-down');
+        setTimeout(() => DOM.sketchView.classList.add('hidden'), 300);
         updateMetrics();
     });
 

@@ -1,88 +1,280 @@
+/* --- OFFLINE DESIGN CORE FOR AVIUMNOTES MATERIAL 3 DESIGN SPECS --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 body {
-    font-family: 'SF Pro Display', -apple-system, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #FFF8F6;
+    color: #2C1A16;
+    overflow-x: hidden;
     -webkit-tap-highlight-color: transparent;
 }
 
-.ios-mesh-bg {
-    background: radial-gradient(circle at 10% 10%, #150f24 0%, #000000 65%),
-                radial-gradient(circle at 90% 90%, #0a1120 0%, #000000 100%);
-    background-attachment: fixed;
-}
-
-.note-item {
-    background: transparent;
-    transition: background-color 0.15s ease;
-}
-.note-item:active {
-    background-color: rgba(255, 255, 255, 0.08);
-}
-
-#noteBody:empty:before {
-    content: attr(data-placeholder);
-    color: #4b5563;
-}
-
-.active-color {
-    border: 3px solid #EAB308;
-    transform: scale(1.08);
-}
-
-/* Checklist Todo Element Structuring */
-.todo-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    margin: 6px 0;
-}
-
-.todo-checkbox {
-    width: 20px;
-    height: 20px;
-    border: 2px solid #EAB308;
-    border-radius: 6px;
-    display: inline-block;
-    cursor: pointer;
-    margin-top: 3px;
+#app {
     position: relative;
-    flex-shrink: 0;
+    min-h: 100vh;
+    padding-bottom: 100px;
 }
 
-.todo-checkbox.checked {
-    background-color: #EAB308;
+/* Typography Scale */
+.main-title { font-size: 36px; font-weight: 700; tracking-tight: -0.02em; color: #2C1A16; }
+.sub-counter { font-size: 15px; color: #A0857F; font-weight: 500; margin-top: 2px; }
+
+/* Dashboard Toolbar Shells */
+.header-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
 }
-.todo-checkbox.checked::after {
-    content: '✓';
-    position: absolute;
-    color: black;
+
+.search-input-wrapper {
+    position: relative;
+    flex-1;
+    max-width: 220px;
+}
+
+.search-input-wrapper input {
+    width: 100%;
+    background-color: #F5EBE8;
+    border: none;
+    outline: none;
+    padding: 10px 16px 10px 40px;
+    border-radius: 30px;
     font-size: 14px;
-    font-weight: bold;
-    top: -2px;
-    left: 3px;
+    color: #2C1A16;
 }
 
-.todo-checkbox.checked + .todo-text {
-    text-decoration: line-through;
-    color: #6b7280;
+.search-input-wrapper input::placeholder { color: #CDAFA9; }
+
+.search-icon {
+    position: absolute;
+    left: 14px;
+    top: 9px;
+    font-size: 18px;
+    color: #A0857F;
 }
 
-/* Horizontal Presentation Sliding Animations */
-.slide-in-right {
-    display: flex !important;
-    animation: slideInR 0.35s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-}
-.slide-out-right {
-    animation: slideOutR 0.32s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+.action-icon {
+    font-size: 24px;
+    padding: 8px;
+    color: #70554F;
+    cursor: pointer;
 }
 
-@keyframes slideInR {
-    from { transform: translateX(100%); }
-    to { transform: translateX(0); }
-}
-@keyframes slideOutR {
-    from { transform: translateX(0); }
-    to { transform: translateX(100%); }
+/* Notes Cards Grid Layout */
+.notes-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 16px;
 }
 
-input, div[contenteditable] {
-    caret-color: #EAB308;
+.note-card {
+    border-radius: 28px;
+    padding: 20px;
+    border: 1px solid rgba(138, 74, 59, 0.06);
+    box-shadow: 0 4px 14px rgba(138, 74, 59, 0.02);
+    cursor: pointer;
+    transition: transform 0.15s ease;
 }
+.note-card:active { transform: scale(0.99); }
+.note-card h3 { font-size: 20px; font-weight: 700; color: #2C1A16; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.note-card div { font-size: 15px; color: #4A3530; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* Empty Workspace Placeholder Frames */
+.empty-state-frame {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 110px;
+}
+
+.illustration-circle {
+    width: 160px;
+    height: 160px;
+    background-color: #FCDCD5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.empty-icon { font-size: 64px; color: #8A4A3B; }
+.empty-title { font-size: 24px; font-weight: 700; color: #2C1A16; margin-bottom: 4px; }
+.empty-text { font-size: 15px; color: #70554F; }
+
+/* Pro Components Button Layouts */
+.pill-btn {
+    border: none;
+    outline: none;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.primary-btn { background-color: #8A4A3B; color: #FFFFFF; }
+.secondary-btn { background-color: #FCDCD5; color: #8A4A3B; }
+.button-icon-left { margin-right: 4px; font-size: 18px; }
+
+.circle-icon-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: none;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #F5EBE8;
+    color: #70554F;
+    cursor: pointer;
+}
+.accent-btn { background-color: #FCDCD5; color: #8A4A3B; }
+.disabled-state { opacity: 0.4; pointer-events: none; }
+
+/* Full panel sheets layout specs */
+.view-panel {
+    width: 100%;
+    min-height: 100vh;
+}
+
+.fixed-view {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.hidden { display: none !important; }
+.mask-down { transform: translateY(100%); }
+.mask-up { transform: translateY(0); }
+
+/* Document Workspace Controls */
+.editor-header { display: flex; justify-content: space-between; align-items: center; }
+.header-utility-cluster { display: flex; gap: 10px; align-items: center; }
+
+.metrics-hud {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #A0857F;
+    font-weight: 600;
+    border-bottom: 1px solid #F5EBE8;
+    padding-bottom: 12px;
+}
+
+.metric-pill { background-color: #F5EBE8; color: #70554F; padding: 4px 10px; border-radius: 6px; }
+
+.editor-body-wrapper { display: flex; flex-direction: column; gap: 12px; flex: 1; overflow-y: auto; }
+#noteTitle { width: 100%; border: none; outline: none; background: transparent; font-size: 28px; font-weight: 700; color: #2C1A16; }
+#noteTitle::placeholder { color: #CDAFA9; }
+#noteBody { width: 100%; flex: 1; border: none; outline: none; background: transparent; font-size: 17px; line-height: 1.6; color: #4A3530; min-height: 200px; }
+#noteBody:empty:before { content: attr(data-placeholder); color: #CDAFA9; }
+
+/* Embedded formatting options dock bar */
+.formatting-ribbon {
+    background-color: #FFF0EC;
+    border: 1px solid #F5EBE8;
+    padding: 8px 16px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-radius: 20px;
+    box-shadow: 0 4px 14px rgba(138, 74, 59, 0.04);
+    max-width: 420px;
+    width: 100%;
+    margin: 12px auto 0 auto;
+}
+
+.format-btn { background: none; border: none; outline: none; font-size: 17px; color: #2C1A16; width: 38px; height: 38px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.format-btn:hover { background-color: #FCDCD5; }
+.special-btn { color: #8A4A3B; }
+.font-bold { font-weight: 700; }
+.font-italic { font-style: italic; }
+.font-underline { text-decoration: underline; }
+.font-strike { text-decoration: line-through; }
+.separator-line { width: 1px; height: 24px; background-color: rgba(205,175,169,0.3); }
+
+/* Checklist Todo Elements */
+.todo-row { display: flex; align-items: flex-start; gap: 12px; margin: 8px 0; }
+.todo-checkbox { width: 22px; height: 22px; border: 2px solid #8A4A3B; border-radius: 7px; display: inline-block; cursor: pointer; margin-top: 2px; position: relative; flex-shrink: 0; background-color: transparent; transition: background-color 0.15s ease; }
+.todo-checkbox.checked { background-color: #8A4A3B; }
+.todo-checkbox.checked::after { content: '✓'; position: absolute; color: white; font-size: 15px; font-weight: bold; top: -3px; left: 4px; }
+.todo-checkbox.checked + .todo-text { text-decoration: line-through; color: #CDAFA9; }
+
+/* Canvas Graphics Sketch Engine elements */
+.sketch-layer-bg { background-color: #FFF8F6; padding: 0 !important; }
+.sketch-header { display: flex; justify-content: space-between; align-items: center; background-color: #FFFFFF; border-bottom: 1px solid #F5EBE8; width: 100%; }
+
+.toggle-pill-container { display: flex; background-color: #F5EBE8; padding: 4px; border-radius: 30px; gap: 2px; }
+.toggle-pill-item { border: none; outline: none; font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 20px; background: none; color: #70554F; cursor: pointer; }
+.active-pill { background-color: #FFFFFF; color: #8A4A3B; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+
+.canvas-canvas-sheet { flex: 1; background-color: #FFFFFF; border-radius: 32px; border: 1px solid #F5EBE8; position: relative; overflow: hidden; }
+#paintCanvas { width: 100%; height: 100%; display: block; }
+#clearCanvasBtn { position: absolute; top: 16px; right: 16px; background-color: #FFF0EC; border: 1px solid #FCDCD5; color: #DC2626; }
+
+.canvas-controls-panel { background-color: #FFF0EC; border-top: 1px solid #F5EBE8; border-radius: 40px 40px 0 0; }
+.slider-control-row { display: flex; align-items: center; gap: 16px; }
+.slider-icon { color: #70554F; font-size: 20px; }
+.custom-range-slider { flex: 1; -webkit-appearance: none; height: 6px; background: #EADED9; border-radius: 10px; outline: none; }
+.custom-range-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #8A4A3B; cursor: pointer; }
+
+.sketch-palette-row { display: flex; gap: 12px; overflow-x: auto; padding: 4px 0; }
+.sketch-palette-row::-webkit-scrollbar { display: none; }
+.sketch-color { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #FFFFFF; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.06); flex-shrink: 0; }
+.active-color { border-color: #8A4A3B !important; transform: scale(1.1); }
+
+/* Palettes Engine Context Utilities */
+.bg-black { background-color: #000000; } .bg-gray { background-color: #6B7280; } .bg-red { background-color: #EF4444; }
+.bg-orange { background-color: #F97316; } .bg-yellow { background-color: #EAB308; } .bg-green { background-color: #22C55E; }
+.bg-blue { background-color: #3B82F6; } .bg-pink { background-color: #FCDCD5; } .bg-gold { background-color: #FEE295; }
+.text-accent { color: #8A4A3B !important; } .text-gold-dark { color: #785900 !important; } .text-danger { color: #DC2626 !important; }
+
+/* Color picker Bottom Drawer Sheets layout variables */
+.bottom-sheet-modal { position: fixed; inset: 0; z-index: 100; background-color: rgba(0, 0, 0, 0.4); display: flex; align-items: flex-end; transition: opacity 0.28s ease; }
+.bottom-sheet-card { width: 100%; background-color: #FFF0EC; border-radius: 40px 40px 0 0; box-shadow: 0 -8px 32px rgba(0,0,0,0.08); transform: translateY(100%); transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1); max-width: 480px; margin: 0 auto; }
+.drawer-handle { width: 48px; height: 5px; background-color: #CDAFA9; border-radius: 10px; margin: 0 auto; }
+.sheet-title { font-size: 20px; font-weight: 700; text-align: center; color: #2C1A16; }
+
+.sheet-color-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 12px; justify-items: center; }
+.sheet-color-btn { width: 50px; height: 50px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #8A4A3B; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+.border-active { border-color: #8A4A3B !important; }
+
+/* Appearance Option Colors Mapping variables */
+.c-bg-default { background-color: #FFF8F6; } .c-bg-pink { background-color: #FCECEB; } .c-bg-orange { background-color: #FBF0E3; }
+.c-bg-yellow { background-color: #FBF5E3; } .c-bg-green { background-color: #EBFCEE; } .c-bg-cyan { background-color: #EBF9FC; }
+.c-bg-purple { background-color: #EEEDFC; } .c-bg-rose { background-color: #FCEEFC; }
+
+/* Micro Interaction Visibility transitions */
+.fade-in { opacity: 1 !important; } .fade-out { opacity: 0; }
+.translate-up { transform: translateY(0) !important; } .translate-down { transform: translateY(100%); }
+
+/* Action speed-dial FAB menus layout models */
+.action-fab-system-wrapper { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; z-index: 90; }
+.master-fab-trigger { width: 64px; height: 64px; border-radius: 20px; background-color: #8A4A3B; color: #FFFFFF; border: none; outline: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s ease, background-color 0.2s ease; }
+.master-fab-trigger span { font-size: 32px; transition: transform 0.2s ease; }
+.rotate-icon { transform: rotate(45deg); }
+.master-fab-active { background-color: #5C3227; }
+
+.fab-options-stack { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; transition: opacity 0.2s ease, transform 0.2s ease; }
+.fab-option-row { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.fab-option-label { background-color: #FCDCD5; color: #2C1A16; padding: 6px 16px; border-radius: 20px; font-size: 14px; font-weight: 600; box-shadow: 0 2px 6px rgba(138,74,59,0.06); }
+.shift-up { transform: translateY(0) !important; } .shift-down { transform: translateY(16px); }
+
+/* Global markup auto highlights */
+mark { background-color: rgba(138, 74, 59, 0.2); color: #2C1A16; font-weight: 600; padding: 0 2px; border-radius: 3px; }
