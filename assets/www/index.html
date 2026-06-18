@@ -17,11 +17,11 @@
             <!-- Top Controls Toolbar Row -->
             <div class="header-toolbar mb-4">
                 <div class="search-input-wrapper">
-                    <span class="material-icons search-icon">search</span>
+                    <span class="material-icons-round search-icon">search</span>
                     <input type="text" id="searchBar" placeholder="Search entries...">
                 </div>
-                <span class="material-icons action-icon">view_stream</span>
-                <span class="material-icons action-icon">more_vert</span>
+                <span class="material-icons-round action-icon">view_stream</span>
+                <span class="material-icons-round action-icon">more_vert</span>
             </div>
 
             <!-- App Title Welcome Branding -->
@@ -36,7 +36,7 @@
             <!-- Centered Empty Grid Layout Element -->
             <div id="emptyState" class="empty-state-frame">
                 <div class="illustration-circle">
-                    <span class="material-icons empty-icon">note_add</span>
+                    <span class="material-icons-round empty-icon">note_add</span>
                 </div>
                 <h2 class="empty-title">No notes yet</h2>
                 <p class="empty-text">Tap + to create your first note</p>
@@ -48,12 +48,12 @@
             <!-- Navigation Action Menu Header -->
             <div class="editor-header mb-4">
                 <button id="backBtn" class="pill-btn secondary-btn">
-                    <span class="material-icons button-icon-left">arrow_back</span> Back
+                    <span class="material-icons-round button-icon-left">arrow_back</span> Back
                 </button>
                 <div class="header-utility-cluster">
-                    <button id="speakBtn" class="circle-icon-btn"><span class="material-icons">volume_up</span></button>
-                    <button id="exportBtn" class="circle-icon-btn"><span class="material-icons">file_download</span></button>
-                    <button id="colorPaletteToggle" class="circle-icon-btn accent-btn"><span class="material-icons">palette</span></button>
+                    <button id="speakBtn" class="circle-icon-btn"><span class="material-icons-round">volume_up</span></button>
+                    <button id="exportBtn" class="circle-icon-btn"><span class="material-icons-round">file_download</span></button>
+                    <button id="colorPaletteToggle" class="circle-icon-btn accent-btn"><span class="material-icons-round">palette</span></button>
                     <button id="saveBtn" class="pill-btn primary-btn disabled-state">Done</button>
                 </div>
             </div>
@@ -76,35 +76,35 @@
                 <button onclick="formatDoc('italic')" class="format-btn font-italic">I</button>
                 <button onclick="formatDoc('underline')" class="format-btn font-underline">U</button>
                 <button onclick="formatDoc('strikeThrough')" class="format-btn font-strike">S</button>
-                <button id="insertTodoBtn" class="format-btn special-btn"><span class="material-icons">check_box</span></button>
+                <button id="insertTodoBtn" class="format-btn special-btn"><span class="material-icons-round">check_box</span></button>
                 <div class="separator-line"></div>
-                <button id="triggerInlineSketch" class="format-btn special-btn"><span class="material-icons">draw</span></button>
+                <button id="triggerInlineSketch" class="format-btn special-btn"><span class="material-icons-round">draw</span></button>
             </div>
         </section>
 
         <!-- HIGH-PERFORMANCE SKETCHPAD INTERACTIVE CANVAS LAYER -->
         <section id="sketchView" class="view-panel fixed-view hidden mask-down sketch-layer-bg">
             <div class="sketch-header p-4">
-                <button id="closeSketchBtn" class="pill-btn secondary-btn"><span class="material-icons button-icon-left">close</span> Cancel</button>
+                <button id="closeSketchBtn" class="pill-btn secondary-btn"><span class="material-icons-round button-icon-left">close</span> Cancel</button>
                 <div class="toggle-pill-container" id="brushModeContainer">
                     <button id="penModeBtn" class="toggle-pill-item active-pill">Solid Pen</button>
                     <button id="markerModeBtn" class="toggle-pill-item">Highlighter</button>
                 </div>
                 <button id="saveSketchBtn" class="pill-btn primary-btn font-bold shadow-md">
-                    <span class="material-icons button-icon-left">check</span> Save
+                    <span class="material-icons-round button-icon-left">check</span> Save
                 </button>
             </div>
 
             <!-- Drawing Sheet Wrapper -->
             <div class="canvas-canvas-sheet m-4">
                 <canvas id="paintCanvas"></canvas>
-                <button id="clearCanvasBtn" class="circle-icon-btn text-danger shadow-inner"><span class="material-icons">delete_sweep</span></button>
+                <button id="clearCanvasBtn" class="circle-icon-btn text-danger shadow-inner"><span class="material-icons-round">delete_sweep</span></button>
             </div>
 
             <!-- Canvas Configuration Controls Drawer Footer -->
             <div class="canvas-controls-panel p-6 shadow-2xl">
                 <div class="slider-control-row mb-4">
-                    <span class="material-icons slider-icon">line_weight</span>
+                    <span class="material-icons-round slider-icon">line_weight</span>
                     <input type="range" id="brushThickness" min="2" max="35" value="6" class="custom-range-slider">
                 </div>
                 <!-- Continuous Palette Layout Row -->
@@ -126,7 +126,7 @@
                 <div class="drawer-handle mb-4"></div>
                 <h3 class="sheet-title mb-6">Choose Color</h3>
                 <div class="sheet-color-grid">
-                    <button class="sheet-color-btn c-bg-default border-active" data-bg="#FFF8F6"><span class="material-icons text-sm">check</span></button>
+                    <button class="sheet-color-btn c-bg-default border-active" data-bg="#FFF8F6"><span class="material-icons-round text-sm">check</span></button>
                     <button class="sheet-color-btn c-bg-pink" data-bg="#FCECEB"></button>
                     <button class="sheet-color-btn c-bg-orange" data-bg="#FBF0E3"></button>
                     <button class="sheet-color-btn c-bg-yellow" data-bg="#FBF5E3"></button>
@@ -143,16 +143,30 @@
             <div id="fabMenuOptions" class="fab-options-stack hidden opacity-0 shift-down">
                 <div id="actionSketch" class="fab-option-row">
                     <span class="fab-option-label">Drawing</span>
-                    <button class="circle-icon-btn bg-pink shadow-md text-accent"><span class="material-icons">brush</span></button>
+                    <button class="circle-icon-btn bg-pink shadow-md text-accent"><span class="material-icons-round">brush</span></button>
                 </div>
                 <div id="actionNewNote" class="fab-option-row">
                     <span class="fab-option-label">New Note</span>
-                    <button class="circle-icon-btn bg-gold shadow-md text-gold-dark"><span class="material-icons">edit</span></button>
+                    <button class="circle-icon-btn bg-gold shadow-md text-gold-dark"><span class="material-icons-round">edit</span></button>
                 </div>
             </div>
-            <button id="masterFab" class="master-fab-trigger shadow-xl"><span id="fabIcon" class="material-icons">add</span></button>
+            <button id="masterFab" class="master-fab-trigger shadow-xl"><span id="fabIcon" class="material-icons-round">add</span></button>
         </div>
 
+    </div>
+
+    <div id="masterFabWrapper" class="action-fab-system-wrapper">
+        <div id="fabMenuOptions" class="fab-options-stack hidden opacity-0 shift-down">
+            <div id="actionSketch" class="fab-option-row">
+                <span class="fab-option-label">Drawing</span>
+                <button class="circle-icon-btn bg-pink shadow-md text-accent"><span class="material-icons-round">brush</span></button>
+            </div>
+            <div id="actionNewNote" class="fab-option-row">
+                <span class="fab-option-label">New Note</span>
+                <button class="circle-icon-btn bg-gold shadow-md text-gold-dark"><span class="material-icons-round">edit</span></button>
+            </div>
+        </div>
+        <button id="masterFab" class="master-fab-trigger shadow-xl"><span id="fabIcon" class="material-icons-round">add</span></button>
     </div>
 
     <script src="app.js"></script>

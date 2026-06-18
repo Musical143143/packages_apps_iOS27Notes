@@ -49,6 +49,10 @@ function init() {
     setupEventListeners();
     initializeCanvasEngine();
     setupTodoCheckboxListener();
+    
+    // Ensure the main navigation trigger starts up visible on app launch
+    const wrapper = document.getElementById('masterFabWrapper');
+    if (wrapper) wrapper.style.setProperty('display', 'flex', 'important');
 }
 
 function formatDoc(command) {
@@ -116,7 +120,7 @@ function openEditor(noteId = null) {
     if (state.isFabOpen) toggleFab();
     state.currentNoteId = noteId;
     
-    // Fixes overlap: Hide the main home speed dial wrapper when editing a document
+    // Smoothly hide the floating speed dial block when viewing note spaces
     const wrapper = document.getElementById('masterFabWrapper');
     if (wrapper) wrapper.style.setProperty('display', 'none', 'important');
 
@@ -174,9 +178,9 @@ function discardAndClose() {
     DOM.editorView.classList.remove('mask-up');
     DOM.editorView.classList.add('mask-down');
     
-    // Fixes overlap: Bring the main home speed dial trigger back when returning to dashboard
+    // Safely snap the dashboard dynamic speed dial option menu triggers back into place
     const wrapper = document.getElementById('masterFabWrapper');
-    if (wrapper) wrapper.style.display = 'flex';
+    if (wrapper) wrapper.style.setProperty('display', 'flex', 'important');
 
     setTimeout(() => DOM.editorView.classList.add('hidden'), 300);
 }
@@ -303,7 +307,7 @@ function setupEventListeners() {
             state.selectedBgColor = btn.dataset.bg;
             DOM.editorView.style.backgroundColor = state.selectedBgColor;
             document.querySelectorAll('.sheet-color-btn').forEach(b => { b.innerHTML = ''; b.classList.remove('border-active'); });
-            btn.innerHTML = '<span class="material-icons text-sm">check</span>';
+            btn.innerHTML = '<span class="material-icons-round text-sm">check</span>';
             btn.classList.add('border-active');
         });
     });
@@ -311,7 +315,6 @@ function setupEventListeners() {
     DOM.actionSketch.addEventListener('click', () => {
         if (state.isFabOpen) toggleFab();
         
-        // Hide home FAB layout stack when sketching window launches
         const wrapper = document.getElementById('masterFabWrapper');
         if (wrapper) wrapper.style.setProperty('display', 'none', 'important');
 
@@ -321,7 +324,6 @@ function setupEventListeners() {
     });
 
     DOM.triggerInlineSketch.addEventListener('click', () => {
-        // Hide home FAB layout stack when sketching window launches
         const wrapper = document.getElementById('masterFabWrapper');
         if (wrapper) wrapper.style.setProperty('display', 'none', 'important');
 
@@ -334,10 +336,9 @@ function setupEventListeners() {
         DOM.sketchView.classList.remove('mask-up');
         DOM.sketchView.classList.add('mask-down');
         
-        // Restore home view triggers if exiting out back to main dashboard
         if(DOM.editorView.classList.contains('hidden')) {
             const wrapper = document.getElementById('masterFabWrapper');
-            if (wrapper) wrapper.style.display = 'flex';
+            if (wrapper) wrapper.style.setProperty('display', 'flex', 'important');
         }
         
         setTimeout(() => DOM.sketchView.classList.add('hidden'), 300);
@@ -348,7 +349,6 @@ function setupEventListeners() {
     DOM.saveSketchBtn.addEventListener('click', () => {
         const imageUri = DOM.paintCanvas.toDataURL();
         
-        // If coming out from blank homepage, safely target editor initialization
         if (DOM.editorView.classList.contains('hidden')) {
             openEditor(null);
         } else {
