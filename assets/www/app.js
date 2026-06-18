@@ -297,22 +297,67 @@ function setupEventListeners() {
         DOM.formattingRibbon.classList.toggle('hidden');
     });
 
-    // 🌟 RE-MAPPED DIRECT CAPTURE: Links up contextual options tray items seamlessly
+    // 🌟 BULLETPROOF CONTEXTUAL CARD ACTIONS
     DOM.notesContainer.addEventListener('click', (e) => {
+        const deleteBtn = e.target.closest('.qa-delete');
+        const expandBtn = e.target.closest('.qa-expand');
+        const pinBtn = e.target.closest('.qa-pin');
         const card = e.target.closest('.note-card');
-        if (!card) return;
-        const noteId = card.dataset.id;
 
-        // 1. Direct Quick Delete Action
-        if (e.target.closest('.qa-delete')) {
+        // 1. Direct Delete Action
+        if (deleteBtn && card) {
             e.stopPropagation();
-            if (confirm("Delete this entry instantly?")) {
-                state.notes = state.notes.filter(n => n.id !== noteId);
+            e.preventDefault();
+            const noteId = card.dataset.id;
+            
+            // Check if the custom modal exists, otherwise fallback to native confirm
+            if (DOM.deleteModalOverlay) {
+                state.noteIdToDelete = noteId;
+                DOM.deleteModalOverlay.classList.remove('hidden');
+            } else {
+                if (confirm("Delete this entry instantly?")) {
+                    state.notes = state.notes.filter(n => n.id !== noteId);
+                    localStorage.setItem('avium_pro_offline_notes', JSON.stringify(state.notes));
+                    renderNotesList(DOM.searchBar.value);
+                }
+            }
+            return;
+        }
+
+        // 2. Direct Expand Action
+        if (expandBtn && card) {
+            e.stopPropagation();
+            e.preventDefault();
+            // Route to correct editor based on available functions in your current script state
+            if (typeof openEditor === "function") openEditor(card.dataset.id);
+            else if (typeof openSketchEditor === "function") openSketchEditor(card.dataset.id);
+            return;
+        }
+
+        // 3. Direct Pin Action
+        if (pinBtn && card) {
+            e.stopPropagation();
+            e.preventDefault();
+            const noteId = card.dataset.id;
+            const noteIndex = state.notes.findIndex(n => n.id === noteId);
+            if (noteIndex > -1) {
+                const targetNote = state.notes.splice(noteIndex, 1)[0];
+                targetNote.updatedAt = Date.now(); 
+                state.notes.unshift(targetNote);
                 localStorage.setItem('avium_pro_offline_notes', JSON.stringify(state.notes));
                 renderNotesList(DOM.searchBar.value);
             }
             return;
         }
+
+        // Default: Clicking the card body
+        if (card) {
+            if (typeof openEditor === "function") openEditor(card.dataset.id);
+            else if (typeof openSketchEditor === "function") openSketchEditor(card.dataset.id);
+        }
+    });
+
+
 
         // 2. Direct Quick Expand Action
         if (e.target.closest('.qa-expand')) {
