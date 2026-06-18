@@ -44,6 +44,7 @@ const DOM = {
 let ctx = DOM.paintCanvas.getContext('2d');
 let drawing = false;
 let activePaintColor = '#EF4444';
+let currentUtterance = null;
 
 function init() {
     renderNotesList();
@@ -130,7 +131,7 @@ function openEditor(noteId = null) {
         DOM.noteBody.innerHTML = note.body;
         state.selectedBgColor = note.bgColor || '#FFF8F6';
         DOM.editorTimestamp.textContent = new Date(note.updatedAt).toLocaleString([], {month:'short', day:'numeric', hour: '2-digit', minute:'2-digit'}).toUpperCase();
-        DOM.deleteNoteBtn.classList.remove('hidden'); // Display delete option only for saved records
+        DOM.deleteNoteBtn.classList.remove('hidden');
     } else {
         DOM.noteTitle.value = '';
         DOM.noteBody.innerHTML = '';
@@ -181,7 +182,7 @@ function saveAndClose() {
 }
 
 function discardAndClose() {
-    if (window.speechSynthesis) window.speechSynthesis.cancel();
+    stopSpeakingEngine();
     DOM.editorView.classList.remove('mask-up');
     DOM.editorView.classList.add('mask-down');
     
@@ -189,6 +190,60 @@ function discardAndClose() {
     if (wrapper) wrapper.style.setProperty('display', 'flex', 'important');
 
     setTimeout(() => DOM.editorView.classList.add('hidden'), 300);
+}
+
+// 🔊 FIXED NATIVE TEXT-TO-SPEECH ENGINE
+function handleSpeakingEngine() {
+    const syn = window.speechSynthesis || window.webkitSpeechSynthesis;
+    if (!syn) return alert("Speech engine not supported on this device layout.");
+
+    if (syn.speaking) {
+        stopSpeakingEngine();
+    } else {
+        const bodyText = DOM.noteBody.innerText || '';
+        if (!bodyText.trim()) return;
+
+        // Force a fresh interface clean setup sequence
+        syn.cancel(); 
+        
+        currentUtterance = new SpeechSynthesisUtterance(bodyText);
+        currentUtterance.onend = () => DOM.speakBtn.style.backgroundColor = '#F5EBE8';
+        currentUtterance.onerror = () => DOM.speakBtn.style.backgroundColor = '#F5EBE8';
+        
+        DOM.speakBtn.style.backgroundColor = '#FCDCD5'; // Highlight button while active
+        syn.speak(currentUtterance);
+    }
+}
+
+function stopSpeakingEngine() {
+    const syn = window.speechSynthesis || window.webkitSpeechSynthesis;
+    if (syn && syn.speaking) {
+        syn.cancel();
+    }
+    DOM.speakBtn.style.backgroundColor = '#F5EBE8';
+}
+
+// ☁️ FIXED CRITICAL NATIVE ANDROID BLOB DOWNLOAD BRIDGE
+function handleExportEngine() {
+    const title = DOM.noteTitle.value.trim() || 'Untitled_Note';
+    const rawContent = DOM.noteBody.innerText || '';
+    const outputString = `${title}\n\n${rawContent}`;
+    
+    try {
+        // Encode text string to safe Base64 format to bypass file system blob locks
+        const base64Data = btoa(unescape(encodeURIComponent(outputString)));
+        const cleanFileName = `${title.replace(/\s+/g, '_')}.txt`;
+        
+        const anchor = document.createElement('a');
+        anchor.href = `data:text/plain;charset=utf-8;base64,${base64Data}`;
+        anchor.download = cleanFileName;
+        
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+    } catch (e) {
+        alert("Failed to build output file layer: " + e.message);
+    }
 }
 
 function setupTodoCheckboxListener() {
@@ -250,7 +305,7 @@ function setupEventListeners() {
     DOM.actionNewNote.addEventListener('click', () => openEditor(null));
     DOM.backBtn.addEventListener('click', saveAndClose);
     DOM.saveBtn.addEventListener('click', saveAndClose);
-    DOM.deleteNoteBtn.addEventListener('click', deleteCurrentNote); // Bind note destruction engine hook
+    DOM.deleteNoteBtn.addEventListener('click', deleteCurrentNote);
     DOM.noteTitle.addEventListener('input', updateMetrics);
     DOM.noteBody.addEventListener('input', updateMetrics);
     
@@ -263,29 +318,9 @@ function setupEventListeners() {
         updateMetrics();
     });
 
-    DOM.speakBtn.addEventListener('click', () => {
-        if (window.speechSynthesis.speaking) {
-            window.speechSynthesis.cancel();
-            DOM.speakBtn.style.color = '#70554F';
-        } else {
-            const bodyText = DOM.noteBody.innerText || '';
-            if(!bodyText.trim()) return;
-            const utterance = new SpeechSynthesisUtterance(bodyText);
-            utterance.onend = () => DOM.speakBtn.style.color = '#70554F';
-            DOM.speakBtn.style.color = '#8A4A3B';
-            window.speechSynthesis.speak(utterance);
-        }
-    });
-
-    DOM.exportBtn.addEventListener('click', () => {
-        const title = DOM.noteTitle.value.trim() || 'Untitled_Note';
-        const rawContent = DOM.noteBody.innerText || '';
-        const blob = new Blob([`${title}\n\n${rawContent}`], { type: 'text/plain' });
-        const a = document.createElement('a');
-        a.download = `${title.replace(/\s+/g, '_')}.txt`;
-        a.href = URL.createObjectURL(blob);
-        a.click();
-    });
+    // Mount runtime handlers to updated feature triggers
+    DOM.speakBtn.addEventListener('click', handleSpeakingEngine);
+    DOM.exportBtn.addEventListener('click', handleExportEngine);
 
     DOM.penModeBtn.addEventListener('click', () => {
         state.brushMode = 'solid';
