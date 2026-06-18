@@ -271,3 +271,15 @@ mark { background-color: rgba(138, 74, 59, 0.2); color: #2C1A16; font-weight: 60
 .icon-clear { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23DC2626'%3E%3Cpath d='M15 16h4c.55 0 1-.45 1-1s-.45-1-1-1h-4c-.55 0-1 .45-1 1s.45 1 1 1zm-5.7 1.3l2.8-2.8c.39-.39.39-1.02 0-1.41a.996.996 0 0 0-1.41 0l-2.8 2.8-2.8-2.8a.996.996 0 1 0-1.41 1.41l2.8 2.8-2.8 2.8a.996.996 0 1 0 1.41 1.41l2.8-2.8 2.8 2.8a.996.996 0 1 0 1.41-1.41l-2.8-2.8zm11.2-11H8c-.73 0-1.37.4-1.72 1.02L2.1 11.45c-.13.23-.13.52 0 .75l4.17 6.13c.36.61 1 .97 1.73.97h12.5c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z'/%3E%3C/svg%3E"); }
 .icon-weight { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2370554F'%3E%3Cpath d='M3 17h18v2H3zm0-3h18v2H3zm0-3h18v2H3zm0-3h18v2H3zm0-3h18v2H3z'/%3E%3C/svg%3E"); }
 .icon-check { background-image: url
+
+/* Locate the master-fab mapping class rules at the bottom of your styles.css and update them to target the span child accurately: */
+#fabIcon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FFFFFF'%3E%3Cpath d='M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z'/%3E%3C/svg%3E") !important;
+    transition: transform 0.15s ease-in-out;
+}
+
+/* Fix: Targets the span child elements when the parent button adds its active context flag */
+.master-fab-active #fabIcon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FFFFFF'%3E%3Cpath d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/%3E%3C/svg%3E") !important;
+    transform: rotate(90deg);
+}

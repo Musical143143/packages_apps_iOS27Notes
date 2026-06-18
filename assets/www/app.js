@@ -305,9 +305,15 @@ function initializeCanvasEngine() {
     window.addEventListener('touchend', () => drawing = false);
 }
 
+// Look inside the setupEventListeners() function in your app.js file, find your action triggers, and ensure they target the full row context:
+
 function setupEventListeners() {
     DOM.masterFab.addEventListener('click', toggleFab);
+    
+    // Fix: Changes targets from clicking just the icon to clicking the entire row context (label + button)
     DOM.actionNewNote.addEventListener('click', () => openEditor(null));
+    DOM.actionSketch.addEventListener('click', triggerSketchWindow);
+    
     DOM.backBtn.addEventListener('click', saveAndClose);
     DOM.saveBtn.addEventListener('click', saveAndClose);
     DOM.deleteNoteBtn.addEventListener('click', deleteCurrentNote);
@@ -366,24 +372,19 @@ function setupEventListeners() {
         });
     });
 
+    // Ensure your trigger script explicitly fires layout size updates cleanly
     const triggerSketchWindow = () => {
         resetFabStateInstantly();
-        
         const wrapper = document.getElementById('masterFabWrapper');
         if (wrapper) wrapper.style.setProperty('display', 'none', 'important');
-        
         DOM.sketchView.classList.remove('hidden', 'mask-down');
         DOM.sketchView.classList.add('mask-up');
         setTimeout(syncCanvasSize, 350);
     };
 
-    DOM.actionSketch.addEventListener('click', triggerSketchWindow);
-    DOM.triggerInlineSketch.addEventListener('click', triggerSketchWindow);
-
     DOM.closeSketchBtn.addEventListener('click', () => {
         DOM.sketchView.classList.remove('mask-up');
         DOM.sketchView.classList.add('mask-down');
-        
         if (DOM.editorView.classList.contains('hidden')) {
             resetFabStateInstantly();
         }
@@ -415,4 +416,7 @@ function setupEventListeners() {
     });
 }
 
+
+
 window.addEventListener('DOMContentLoaded', init);
+
