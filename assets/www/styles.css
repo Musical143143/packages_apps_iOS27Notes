@@ -200,6 +200,7 @@ body, html {
 }
 #noteBody:empty:before { content: attr(data-placeholder); color: #A8A09C; }
 
+/* 🌟 FIXED: LIFT BOTTOM HUD FOOTER HIGHER (519.png) 🌟 */
 .editor-bottom-hud { 
     display: flex; 
     justify-content: space-between; 
@@ -207,10 +208,16 @@ body, html {
     font-size: 13px; 
     color: #7A706C; 
     font-weight: 600; 
-    padding-top: 12px; 
     border-top: 1px solid rgba(0,0,0,0.04);
     flex-shrink: 0; 
+    
+    /* Raised clearance tracking properties */
+    padding-top: 14px !important;
+    padding-bottom: 24px !important; /* Extra bottom clearance isolates text from system pill */
+    margin-bottom: env(safe-area-inset-bottom, 0px); /* Binds safely to AOSP display profiles */
 }
+
+
 .metric-pill { background-color: #EAE2DD; color: #4D4542; padding: 4px 10px; border-radius: 6px; }
 
 .todo-row { display: flex; align-items: flex-start; gap: 12px; margin: 8px 0; }
