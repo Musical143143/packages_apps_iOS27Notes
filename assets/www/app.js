@@ -3,7 +3,8 @@ const state = {
     currentNoteId: null,
     isFabOpen: false,
     selectedBgColor: '#FFF8F6',
-    brushMode: 'solid'
+    brushMode: 'solid',
+    isGridLayout: true
 };
 
 const DOM = {
@@ -37,7 +38,9 @@ const DOM = {
     brushThickness: document.getElementById('brushThickness'),
     triggerInlineSketch: document.getElementById('triggerInlineSketch'),
     penModeBtn: document.getElementById('penModeBtn'),
-    markerModeBtn: document.getElementById('markerModeBtn')
+    markerModeBtn: document.getElementById('markerModeBtn'),
+    toolbarStreamBtn: document.getElementById('toolbarStreamBtn'),
+    toolbarMenuBtn: document.getElementById('toolbarMenuBtn')
 };
 
 let ctx = DOM.paintCanvas.getContext('2d');
@@ -263,7 +266,7 @@ function handleSpeakingEngine() {
 }
 
 function stopSpeakingEngine() {
-    const syn = window.speechSynthesis || window.webkitSynthesis;
+    const syn = window.speechSynthesis || window.webkitSpeechSynthesis;
     if (syn) syn.cancel();
     DOM.speakBtn.style.setProperty('background-color', '#F5EBE8', 'important');
 }
@@ -377,7 +380,7 @@ function setupEventListeners() {
     DOM.speakBtn.addEventListener('click', handleSpeakingEngine);
     DOM.exportBtn.addEventListener('click', handleExportEngine);
 
-    // 🎨 FIXED GLOBAL DELEGATION TARGET WITH CLASSLIST TYPO RESETS
+    // 🎨 PRO GLOBAL EVENT DELEGATION CAPTURE
     document.addEventListener('click', (e) => {
         const paletteBtn = e.target.closest('#colorPaletteToggle') || e.target.closest('.accent-btn');
         if (paletteBtn) {
@@ -401,6 +404,27 @@ function setupEventListeners() {
         }
     });
 
+    if (DOM.toolbarStreamBtn) {
+        DOM.toolbarStreamBtn.addEventListener('click', () => {
+            state.isGridLayout = !state.isGridLayout;
+            if (state.isGridLayout) {
+                DOM.notesContainer.classList.remove('list-layout-active');
+            } else {
+                DOM.notesContainer.classList.add('list-layout-active');
+            }
+        });
+    }
+
+    if (DOM.toolbarMenuBtn) {
+        DOM.toolbarMenuBtn.addEventListener('click', () => {
+            if (confirm("Clear local storage cache files completely?")) {
+                localStorage.clear();
+                state.notes = [];
+                renderNotesList();
+            }
+        });
+    }
+
     DOM.penModeBtn.addEventListener('click', () => {
         state.brushMode = 'solid';
         DOM.penModeBtn.classList.add('active-pill');
@@ -418,7 +442,7 @@ function setupEventListeners() {
             DOM.colorSheetCard.classList.remove('translate-up');
             DOM.colorSheetCard.classList.add('translate-down');
             DOM.colorSheetOverlay.classList.remove('fade-in');
-            // Fixed typo: Added .classList back into clear transition loop
+            // 🌟 FIXED TYPO: Restored correct .classList wrapper execution call
             setTimeout(() => DOM.colorSheetOverlay.classList.add('hidden'), 300);
         }
     });
