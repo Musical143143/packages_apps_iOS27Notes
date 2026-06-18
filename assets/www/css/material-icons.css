@@ -1,15 +1,15 @@
 @font-face {
-  font-family: 'Material Icons Round';
+  font-family: 'Material Icons';
   font-style: normal;
   font-weight: 400;
   src: url('../fonts/material-icons.woff2') format('woff2');
 }
 
-.material-icons-round {
-  font-family: 'Material Icons Round' !important;
+.material-icons {
+  font-family: 'Material Icons' !important;
   font-weight: normal;
   font-style: normal;
-  font-size: 24px !important;
+  font-size: 24px;
   display: inline-block;
   line-height: 1;
   text-transform: none;
@@ -20,8 +20,4 @@
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   -moz-osx-font-smoothing: grayscale;
-  width: 24px;
-  height: 24px;
-  overflow: hidden;
-  color: inherit;
 }
