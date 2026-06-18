@@ -163,7 +163,6 @@ function openEditor(noteId = null) {
         DOM.deleteNoteBtn.classList.add('hidden');
     }
     
-    // Explicitly sync current selection ring on matching palette target node
     document.querySelectorAll('.sheet-color-btn').forEach(b => {
         b.className = 'sheet-color-btn';
         if (b.dataset.bg.toLowerCase() === state.selectedBgColor.toLowerCase()) {
@@ -269,7 +268,6 @@ function stopSpeakingEngine() {
     DOM.speakBtn.style.setProperty('background-color', '#F5EBE8', 'important');
 }
 
-// ☁️ FIXED CLOUD EXPORT FUNCTION
 function handleExportEngine() {
     const title = DOM.noteTitle.value.trim() || 'Untitled_Note';
     const rawContent = DOM.noteBody.innerText || '';
@@ -379,6 +377,30 @@ function setupEventListeners() {
     DOM.speakBtn.addEventListener('click', handleSpeakingEngine);
     DOM.exportBtn.addEventListener('click', handleExportEngine);
 
+    // 🎨 GLOBAL DELEGATION ENGINE: Guarantees modal opens and clicks trigger cleanly
+    document.addEventListener('click', (e) => {
+        const paletteBtn = e.target.closest('#colorPaletteToggle') || e.target.closest('.accent-btn');
+        if (paletteBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            DOM.colorSheetOverlay.classList.remove('hidden');
+            setTimeout(() => {
+                DOM.colorSheetOverlay.classList.add('fade-in');
+                DOM.colorSheetCard.classList.remove('translate-down');
+                DOM.colorSheetCard.classList.add('translate-up');
+            }, 10);
+            return;
+        }
+
+        const colorOption = e.target.closest('.sheet-color-btn');
+        if (colorOption) {
+            state.selectedBgColor = colorOption.dataset.bg;
+            DOM.editorView.style.backgroundColor = state.selectedBgColor;
+            document.querySelectorAll('.sheet-color-btn').forEach(b => b.classList.remove('border-active'));
+            colorOption.classList.add('border-active');
+        }
+    });
+
     DOM.penModeBtn.addEventListener('click', () => {
         state.brushMode = 'solid';
         DOM.penModeBtn.classList.add('active-pill');
@@ -391,46 +413,13 @@ function setupEventListeners() {
         DOM.penModeBtn.classList.remove('active-pill');
     });
 
-    // 🎨 FIX: Enforce clean target matching to safely reveal the bottom sheet drawer
-    DOM.colorPaletteToggle.addEventListener('click', (e) => {
-        // Stop background caret or text field focus side-effects
-        e.preventDefault();
-        e.stopPropagation();
-
-        // Reveal the overlay sheet panels cleanly
-        DOM.colorSheetOverlay.classList.remove('hidden');
-        setTimeout(() => {
-            DOM.colorSheetOverlay.classList.add('fade-in');
-            DOM.colorSheetCard.classList.remove('translate-down');
-            DOM.colorSheetCard.classList.add('translate-up');
-        }, 10);
-    });
-
-
-
     DOM.colorSheetOverlay.addEventListener('click', (e) => {
         if (e.target === DOM.colorSheetOverlay) {
             DOM.colorSheetCard.classList.remove('translate-up');
             DOM.colorSheetCard.classList.add('translate-down');
             DOM.colorSheetOverlay.classList.remove('fade-in');
-            setTimeout(() => DOM.colorSheetOverlay.classList.add('hidden'), 300);
+            setTimeout(() => DOM.colorSheetOverlay.add('hidden'), 300);
         }
-    });
-
-    // 🎨 FIXED THEME PALETTE BUTTON HOOKS
-    document.querySelectorAll('.sheet-color-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const targetButton = e.target.closest('.sheet-color-btn');
-            if (!targetButton) return;
-
-            state.selectedBgColor = targetButton.dataset.bg;
-            DOM.editorView.style.backgroundColor = state.selectedBgColor;
-            
-            document.querySelectorAll('.sheet-color-btn').forEach(b => { 
-                b.classList.remove('border-active'); 
-            });
-            targetButton.classList.add('border-active');
-        });
     });
 
     DOM.triggerInlineSketch.addEventListener('click', triggerSketchWindow);
