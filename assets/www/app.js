@@ -51,7 +51,7 @@ function init() {
     setupEventListeners();
     initializeCanvasEngine();
     setupTodoCheckboxListener();
-    resetFabStateInstantly(); // Force button variables to initialize correctly on launch
+    resetFabStateInstantly(); 
 }
 
 function formatDoc(command) {
@@ -109,26 +109,28 @@ function toggleFab() {
         DOM.fabMenuOptions.classList.add('shift-down');
         DOM.fabMenuOptions.classList.add('opacity-0');
         DOM.masterFab.classList.remove('master-fab-active');
-        setTimeout(() => DOM.fabMenuOptions.add('hidden'), 200);
+        setTimeout(() => DOM.fabMenuOptions.add('hidden'), 150);
     }
 }
 
-// 🛠️ FIX TRIGGER: Completely resets and collapses the speed dial values on navigation sweeps
+// 🛠️ CRITICAL FIXED UTILITY: Instantly destroys any menu hanging loops
 function resetFabStateInstantly() {
     state.isFabOpen = false;
-    DOM.fabMenuOptions.classList.add('hidden', 'opacity-0', 'shift-down');
-    DOM.fabMenuOptions.classList.remove('shift-up');
-    DOM.masterFab.classList.remove('master-fab-active');
+    DOM.fabMenuOptions.className = 'fab-options-stack hidden opacity-0 shift-down';
+    DOM.masterFab.className = 'master-fab-trigger shadow-xl';
     
     const wrapper = document.getElementById('masterFabWrapper');
-    if (wrapper) wrapper.style.setProperty('display', 'flex', 'important');
+    if (wrapper) {
+        wrapper.className = 'action-fab-system-wrapper';
+        wrapper.style.setProperty('display', 'flex', 'important');
+    }
 }
 
 function openEditor(noteId = null) {
-    // Collapse option panels cleanly before entering documents workspace
     resetFabStateInstantly();
     state.currentNoteId = noteId;
     
+    // Hide home floating action system elements completely while editing templates
     const wrapper = document.getElementById('masterFabWrapper');
     if (wrapper) wrapper.style.setProperty('display', 'none', 'important');
 
@@ -196,7 +198,7 @@ function discardAndClose() {
     DOM.editorView.classList.remove('mask-up');
     DOM.editorView.classList.add('mask-down');
     
-    // Smoothly restore the master trigger on completion to a clean plus configuration layout
+    // Reset FAB values instantly when exiting back to main stream board
     resetFabStateInstantly();
 
     setTimeout(() => DOM.editorView.classList.add('hidden'), 300);
@@ -368,11 +370,11 @@ function setupEventListeners() {
     });
 
     const triggerSketchWindow = () => {
-        // Force the speed-dial components to collapse and reset state handles cleanly
         resetFabStateInstantly();
         
         const wrapper = document.getElementById('masterFabWrapper');
         if (wrapper) wrapper.style.setProperty('display', 'none', 'important');
+        
         DOM.sketchView.classList.remove('hidden', 'mask-down');
         DOM.sketchView.classList.add('mask-up');
         setTimeout(syncCanvasSize, 350);
@@ -385,7 +387,7 @@ function setupEventListeners() {
         DOM.sketchView.classList.remove('mask-up');
         DOM.sketchView.classList.add('mask-down');
         
-        // Restore elements safely on drop back tracking loops
+        // Handle direct exits cleanly
         if (DOM.editorView.classList.contains('hidden')) {
             resetFabStateInstantly();
         }
