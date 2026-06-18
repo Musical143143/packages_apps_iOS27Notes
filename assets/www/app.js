@@ -51,9 +51,7 @@ function init() {
     setupEventListeners();
     initializeCanvasEngine();
     setupTodoCheckboxListener();
-    
-    const wrapper = document.getElementById('masterFabWrapper');
-    if (wrapper) wrapper.style.setProperty('display', 'flex', 'important');
+    resetFabStateInstantly(); // Force button variables to initialize correctly on launch
 }
 
 function formatDoc(command) {
@@ -115,8 +113,20 @@ function toggleFab() {
     }
 }
 
+// 🛠️ FIX TRIGGER: Completely resets and collapses the speed dial values on navigation sweeps
+function resetFabStateInstantly() {
+    state.isFabOpen = false;
+    DOM.fabMenuOptions.classList.add('hidden', 'opacity-0', 'shift-down');
+    DOM.fabMenuOptions.classList.remove('shift-up');
+    DOM.masterFab.classList.remove('master-fab-active');
+    
+    const wrapper = document.getElementById('masterFabWrapper');
+    if (wrapper) wrapper.style.setProperty('display', 'flex', 'important');
+}
+
 function openEditor(noteId = null) {
-    if (state.isFabOpen) toggleFab();
+    // Collapse option panels cleanly before entering documents workspace
+    resetFabStateInstantly();
     state.currentNoteId = noteId;
     
     const wrapper = document.getElementById('masterFabWrapper');
@@ -186,16 +196,15 @@ function discardAndClose() {
     DOM.editorView.classList.remove('mask-up');
     DOM.editorView.classList.add('mask-down');
     
-    const wrapper = document.getElementById('masterFabWrapper');
-    if (wrapper) wrapper.style.setProperty('display', 'flex', 'important');
+    // Smoothly restore the master trigger on completion to a clean plus configuration layout
+    resetFabStateInstantly();
 
     setTimeout(() => DOM.editorView.classList.add('hidden'), 300);
 }
 
-// 🔊 FIXED NATIVE TEXT-TO-SPEECH ENGINE
 function handleSpeakingEngine() {
     const syn = window.speechSynthesis || window.webkitSpeechSynthesis;
-    if (!syn) return alert("Speech engine not supported on this device layout.");
+    if (!syn) return;
 
     if (syn.speaking) {
         stopSpeakingEngine();
@@ -203,14 +212,13 @@ function handleSpeakingEngine() {
         const bodyText = DOM.noteBody.innerText || '';
         if (!bodyText.trim()) return;
 
-        // Force a fresh interface clean setup sequence
         syn.cancel(); 
         
         currentUtterance = new SpeechSynthesisUtterance(bodyText);
         currentUtterance.onend = () => DOM.speakBtn.style.backgroundColor = '#F5EBE8';
         currentUtterance.onerror = () => DOM.speakBtn.style.backgroundColor = '#F5EBE8';
         
-        DOM.speakBtn.style.backgroundColor = '#FCDCD5'; // Highlight button while active
+        DOM.speakBtn.style.backgroundColor = '#FCDCD5'; 
         syn.speak(currentUtterance);
     }
 }
@@ -223,14 +231,12 @@ function stopSpeakingEngine() {
     DOM.speakBtn.style.backgroundColor = '#F5EBE8';
 }
 
-// ☁️ FIXED CRITICAL NATIVE ANDROID BLOB DOWNLOAD BRIDGE
 function handleExportEngine() {
     const title = DOM.noteTitle.value.trim() || 'Untitled_Note';
     const rawContent = DOM.noteBody.innerText || '';
     const outputString = `${title}\n\n${rawContent}`;
     
     try {
-        // Encode text string to safe Base64 format to bypass file system blob locks
         const base64Data = btoa(unescape(encodeURIComponent(outputString)));
         const cleanFileName = `${title.replace(/\s+/g, '_')}.txt`;
         
@@ -242,7 +248,7 @@ function handleExportEngine() {
         anchor.click();
         document.body.removeChild(anchor);
     } catch (e) {
-        alert("Failed to build output file layer: " + e.message);
+        console.error(e);
     }
 }
 
@@ -318,7 +324,6 @@ function setupEventListeners() {
         updateMetrics();
     });
 
-    // Mount runtime handlers to updated feature triggers
     DOM.speakBtn.addEventListener('click', handleSpeakingEngine);
     DOM.exportBtn.addEventListener('click', handleExportEngine);
 
@@ -363,7 +368,9 @@ function setupEventListeners() {
     });
 
     const triggerSketchWindow = () => {
-        if (state.isFabOpen) toggleFab();
+        // Force the speed-dial components to collapse and reset state handles cleanly
+        resetFabStateInstantly();
+        
         const wrapper = document.getElementById('masterFabWrapper');
         if (wrapper) wrapper.style.setProperty('display', 'none', 'important');
         DOM.sketchView.classList.remove('hidden', 'mask-down');
@@ -377,9 +384,10 @@ function setupEventListeners() {
     DOM.closeSketchBtn.addEventListener('click', () => {
         DOM.sketchView.classList.remove('mask-up');
         DOM.sketchView.classList.add('mask-down');
-        if(DOM.editorView.classList.contains('hidden')) {
-            const wrapper = document.getElementById('masterFabWrapper');
-            if (wrapper) wrapper.style.setProperty('display', 'flex', 'important');
+        
+        // Restore elements safely on drop back tracking loops
+        if (DOM.editorView.classList.contains('hidden')) {
+            resetFabStateInstantly();
         }
         setTimeout(() => DOM.sketchView.classList.add('hidden'), 300);
     });
