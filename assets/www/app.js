@@ -218,33 +218,66 @@ function discardAndClose() {
     setTimeout(() => DOM.editorView.classList.add('hidden'), 300);
 }
 
+// 🔊 REWIRED AUDIO ENGINE WITH DIRECT USER PERMISSION LIFTCYCLES
 function handleSpeakingEngine() {
-    const syn = window.speechSynthesis || window.webkitSpeechSynthesis;
-    if (!syn) return;
+    try {
+        const syn = window.speechSynthesis || window.webkitSpeechSynthesis;
+        if (!syn) {
+            alert("Audio synthesis engine is unavailable on this system architecture.");
+            return;
+        }
 
-    if (syn.speaking) {
-        stopSpeakingEngine();
-    } else {
+        // If currently speaking, toggle off immediately
+        if (syn.speaking) {
+            stopSpeakingEngine();
+            return;
+        }
+
         const bodyText = DOM.noteBody.innerText || '';
         if (!bodyText.trim()) return;
 
-        syn.cancel(); 
+        // Force terminate stale processing buffers to clear the audio pipeline channel
+        syn.cancel();
+
+        // Create a brand new utterance on the direct user-gesture thread context
+        currentUtterance = new SpeechSynthesisUtterance(bodyText.trim());
         
-        currentUtterance = new SpeechSynthesisUtterance(bodyText);
-        currentUtterance.onend = () => DOM.speakBtn.style.backgroundColor = '#F5EBE8';
-        currentUtterance.onerror = () => DOM.speakBtn.style.backgroundColor = '#F5EBE8';
+        // Target English string engines safely
+        currentUtterance.lang = 'en-US';
+        currentUtterance.rate = 1.0;
+        currentUtterance.pitch = 1.0;
+
+        // Handle micro interaction tracking parameters
+        currentUtterance.onstart = () => {
+            DOM.speakBtn.style.setProperty('background-color', '#FCDCD5', 'important');
+        };
         
-        DOM.speakBtn.style.backgroundColor = '#FCDCD5'; 
+        currentUtterance.onend = () => {
+            DOM.speakBtn.style.setProperty('background-color', '#F5EBE8', 'important');
+            currentUtterance = null;
+        };
+
+        currentUtterance.onerror = (event) => {
+            console.error("Speech Synthesis Error: ", event);
+            DOM.speakBtn.style.setProperty('background-color', '#F5EBE8', 'important');
+            currentUtterance = null;
+        };
+
+        // Fire directly on the interactive event bubble thread loop
         syn.speak(currentUtterance);
+
+    } catch (error) {
+        console.error("Speech Engine Exception: ", error);
+        DOM.speakBtn.style.setProperty('background-color', '#F5EBE8', 'important');
     }
 }
 
 function stopSpeakingEngine() {
     const syn = window.speechSynthesis || window.webkitSpeechSynthesis;
-    if (syn && syn.speaking) {
+    if (syn) {
         syn.cancel();
     }
-    DOM.speakBtn.style.backgroundColor = '#F5EBE8';
+    DOM.speakBtn.style.setProperty('background-color', '#F5EBE8', 'important');
 }
 
 function handleExportEngine() {
