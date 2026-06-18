@@ -1,4 +1,4 @@
-/* --- MULTI-COLUMN DESIGN PLATFORM CORE --- */
+/* --- BULLETPROOF BOUNDED MATERIAL DESIGN CORE --- */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -42,7 +42,7 @@ body, html {
 .search-input-wrapper input::placeholder { color: #CDAFA9; }
 .search-icon { position: absolute; left: 16px; top: 10px; z-index: 2; }
 
-/* 🌟 UPDATED: ASYMMETRIC STAGGERED COLUMN GRID PLATFORM 🌟 */
+/* Asymmetric Staggered Note Grid Container */
 .notes-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -66,17 +66,8 @@ body, html {
     gap: 8px;
     break-inside: avoid;
 }
+.note-card h3 { font-size: 18px; font-weight: 700; color: #000000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-.note-card h3 { 
-    font-size: 18px; 
-    font-weight: 700; 
-    color: #000000; 
-    white-space: nowrap; 
-    overflow: hidden; 
-    text-overflow: ellipsis; 
-}
-
-/* 🌟 MULTI-METRIC PREVIEW RECRUITMENT CHIP BAR 🌟 */
 .card-metadata-chip {
     display: inline-flex;
     align-items: center;
@@ -90,7 +81,6 @@ body, html {
     width: fit-content;
 }
 
-/* 🌟 GRID PREVIEW BOUNDS FOR EMBEDDED CANVAS SKETCHES 🌟 */
 .card-sketch-container {
     width: 100%;
     height: 110px;
@@ -103,22 +93,9 @@ body, html {
     justify-content: center;
     margin-top: 4px;
 }
+.card-sketch-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-.card-sketch-container img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-}
-
-.note-card-text { 
-    font-size: 14px; 
-    color: #4A3530; 
-    line-height: 1.4; 
-    display: -webkit-box; 
-    -webkit-line-clamp: 3; 
-    -webkit-box-orient: vertical; 
-    overflow: hidden; 
-}
+.note-card-text { font-size: 14px; color: #4A3530; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 
 .empty-state-frame { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 60vh; }
 .illustration-circle { width: 140px; height: 140px; background-color: #FCDCD5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
@@ -188,20 +165,59 @@ body, html {
 .toggle-pill-item { border: none; outline: none; font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 20px; background: none; color: #70554F; cursor: pointer; }
 .active-pill { background-color: #FFFFFF; color: #8A4A3B; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
 
-.canvas-canvas-sheet { flex: 1; background-color: #FFFFFF; border-radius: 28px; border: 1px solid #F5EBE8; position: relative; overflow: hidden; }
+/* 🌟 FIXED: SAFE CANVAS VIEWPORT CONTAINER TO SOLVE CUTOUTS 🌟 */
+.canvas-canvas-sheet { 
+    height: calc(100vh - 220px) !important;
+    background-color: #FFFFFF; 
+    border-radius: 28px; 
+    border: 1px solid #F5EBE8; 
+    position: relative; 
+    overflow: hidden; 
+    margin: 12px 16px !important;
+}
 .canvas-canvas-sheet canvas { width: 100% !important; height: 100% !important; display: block !important; touch-action: none; }
 #clearCanvasBtn { position: absolute; top: 16px; right: 16px; background-color: #FFF0EC; border: 1px solid #FCDCD5; color: #DC2626; z-index: 10; }
 
-.canvas-controls-panel { background-color: #FFF0EC; border-top: 1px solid #F5EBE8; border-radius: 40px 40px 0 0; flex-shrink: 0; }
-.slider-control-row { display: flex; align-items: center; gap: 16px; }
+/* 🌟 FIXED: ANCHORED STABLE CONTROLS PANEL FOOTER 🌟 */
+.canvas-controls-panel { 
+    background-color: #FFF0EC; 
+    border-top: 1px solid #F5EBE8; 
+    border-radius: 32px 32px 0 0; 
+    flex-shrink: 0;
+    padding: 16px 24px 28px 24px !important; /* Extra padding clears system navigation pill */
+}
+.slider-control-row { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
 .slider-icon { color: #70554F; font-size: 20px; }
 .custom-range-slider { flex: 1; -webkit-appearance: none; height: 6px; background: #EADED9; border-radius: 10px; outline: none; }
 .custom-range-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #8A4A3B; cursor: pointer; }
 
-.sketch-palette-row { display: flex; gap: 12px; overflow-x: auto; padding: 4px 0; }
+.sketch-palette-row { display: flex; gap: 14px; overflow-x: auto; padding: 6px 2px; align-items: center; }
 .sketch-palette-row::-webkit-scrollbar { display: none; }
-.sketch-color { width: 38px; height: 38px; border-radius: 50%; border: 2px solid #FFFFFF; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.06); flex-shrink: 0; }
-.active-color { border-color: #8A4A3B !important; transform: scale(1.1); }
+
+/* 🌟 FIXED COLOR HOOKS: ACCENT RADIUS AND HIGH CONTRAST ACTIVE INDICATORS 🌟 */
+.sketch-color { 
+    width: 36px; 
+    height: 36px; 
+    border-radius: 50%; 
+    cursor: pointer; 
+    box-shadow: inset 0 0 0 2px rgba(0,0,0,0.05); 
+    flex-shrink: 0;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+    border: 3px solid #FFF0EC !important; /* Matches panel background for an elegant spacing gap */
+}
+.active-color { 
+    border-color: #8A4A3B !important; /* Thick contrast circle ring */
+    transform: scale(1.15); 
+}
+
+/* Hardcoded high contrast palette variables */
+.bg-black { background-color: #1A1A1A !important; } 
+.bg-gray { background-color: #786F6C !important; } 
+.bg-red { background-color: #E03E3E !important; }
+.bg-orange { background-color: #E87A24 !important; } 
+.bg-yellow { background-color: #F1C40F !important; } 
+.bg-green { background-color: #2ECC71 !important; }
+.bg-blue { background-color: #2980B9 !important; }
 
 .bottom-sheet-modal { position: fixed; inset: 0; z-index: 100; background-color: rgba(0, 0, 0, 0.4); display: flex; align-items: flex-end; transition: opacity 0.28s ease; }
 .bottom-sheet-card { width: 100%; background-color: #FFF0EC; border-radius: 40px 40px 0 0; box-shadow: 0 -8px 32px rgba(0,0,0,0.08); transform: translateY(100%); transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1); max-width: 480px; margin: 0 auto; }
@@ -227,7 +243,7 @@ body, html {
 
 mark { background-color: rgba(138, 74, 59, 0.2); color: #2C1A16; font-weight: 600; padding: 0 2px; border-radius: 3px; }
 
-/* 🌟 BOUNDED IMMUTABLE VECTOR ASSETS 🌟 */
+/* 🌟 INTEGRATED VECTOR ASSETS 🌟 */
 .icon {
     display: inline-block;
     width: 24px !important;
