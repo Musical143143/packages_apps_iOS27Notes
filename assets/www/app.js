@@ -76,11 +76,8 @@ function renderNotesList(filterQuery = '') {
             card.className = 'note-card';
             
             let displayTitle = note.title.trim() || 'Untitled';
-            
-            // Extract raw text for text snippet previews
             let displayBody = note.body.replace(/<[^>]*>/g, '').trim() || 'No additional text';
 
-            // 🌟 PARSE ENGINE: Scans document markup block for canvas sketch matches
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = note.body;
             const firstImg = tempDiv.querySelector('img');
@@ -95,7 +92,6 @@ function renderNotesList(filterQuery = '') {
                 displayBody = displayBody.replace(regex, `<mark>$1</mark>`);
             }
 
-            // Construct compact visual date strings matching your system layouts
             const noteDate = new Date(note.updatedAt).toLocaleString([], {month:'short', day:'numeric'});
             const textContent = displayBody === 'No additional text' && sketchPreviewHtml ? '' : `<p class="note-card-text">${displayBody}</p>`;
 
@@ -166,6 +162,15 @@ function openEditor(noteId = null) {
         DOM.editorTimestamp.textContent = new Date().toLocaleString([], {month:'short', day:'numeric', hour: '2-digit', minute:'2-digit'}).toUpperCase();
         DOM.deleteNoteBtn.classList.add('hidden');
     }
+    
+    // Explicitly sync current selection ring on matching palette target node
+    document.querySelectorAll('.sheet-color-btn').forEach(b => {
+        b.className = 'sheet-color-btn';
+        if (b.dataset.bg.toLowerCase() === state.selectedBgColor.toLowerCase()) {
+            b.classList.add('border-active');
+        }
+    });
+
     DOM.editorView.style.backgroundColor = state.selectedBgColor;
     updateMetrics();
 }
@@ -218,16 +223,11 @@ function discardAndClose() {
     setTimeout(() => DOM.editorView.classList.add('hidden'), 300);
 }
 
-// 🔊 REWIRED AUDIO ENGINE WITH DIRECT USER PERMISSION LIFTCYCLES
 function handleSpeakingEngine() {
     try {
         const syn = window.speechSynthesis || window.webkitSpeechSynthesis;
-        if (!syn) {
-            alert("Audio synthesis engine is unavailable on this system architecture.");
-            return;
-        }
+        if (!syn) return;
 
-        // If currently speaking, toggle off immediately
         if (syn.speaking) {
             stopSpeakingEngine();
             return;
@@ -236,18 +236,13 @@ function handleSpeakingEngine() {
         const bodyText = DOM.noteBody.innerText || '';
         if (!bodyText.trim()) return;
 
-        // Force terminate stale processing buffers to clear the audio pipeline channel
         syn.cancel();
 
-        // Create a brand new utterance on the direct user-gesture thread context
         currentUtterance = new SpeechSynthesisUtterance(bodyText.trim());
-        
-        // Target English string engines safely
         currentUtterance.lang = 'en-US';
         currentUtterance.rate = 1.0;
         currentUtterance.pitch = 1.0;
 
-        // Handle micro interaction tracking parameters
         currentUtterance.onstart = () => {
             DOM.speakBtn.style.setProperty('background-color', '#FCDCD5', 'important');
         };
@@ -257,29 +252,24 @@ function handleSpeakingEngine() {
             currentUtterance = null;
         };
 
-        currentUtterance.onerror = (event) => {
-            console.error("Speech Synthesis Error: ", event);
+        currentUtterance.onerror = () => {
             DOM.speakBtn.style.setProperty('background-color', '#F5EBE8', 'important');
             currentUtterance = null;
         };
 
-        // Fire directly on the interactive event bubble thread loop
         syn.speak(currentUtterance);
-
     } catch (error) {
-        console.error("Speech Engine Exception: ", error);
-        DOM.speakBtn.style.setProperty('background-color', '#F5EBE8', 'important');
+        console.error(error);
     }
 }
 
 function stopSpeakingEngine() {
     const syn = window.speechSynthesis || window.webkitSpeechSynthesis;
-    if (syn) {
-        syn.cancel();
-    }
+    if (syn) syn.cancel();
     DOM.speakBtn.style.setProperty('background-color', '#F5EBE8', 'important');
 }
 
+// ☁️ FIXED CLOUD EXPORT FUNCTION
 function handleExportEngine() {
     const title = DOM.noteTitle.value.trim() || 'Untitled_Note';
     const rawContent = DOM.noteBody.innerText || '';
@@ -419,13 +409,19 @@ function setupEventListeners() {
         }
     });
 
+    // 🎨 FIXED THEME PALETTE BUTTON HOOKS
     document.querySelectorAll('.sheet-color-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            state.selectedBgColor = btn.dataset.bg;
+        btn.addEventListener('click', (e) => {
+            const targetButton = e.target.closest('.sheet-color-btn');
+            if (!targetButton) return;
+
+            state.selectedBgColor = targetButton.dataset.bg;
             DOM.editorView.style.backgroundColor = state.selectedBgColor;
-            document.querySelectorAll('.sheet-color-btn').forEach(b => { b.innerHTML = ''; b.classList.remove('border-active'); });
-            btn.innerHTML = '<span class="icon icon-check"></span>';
-            btn.classList.add('border-active');
+            
+            document.querySelectorAll('.sheet-color-btn').forEach(b => { 
+                b.classList.remove('border-active'); 
+            });
+            targetButton.classList.add('border-active');
         });
     });
 
