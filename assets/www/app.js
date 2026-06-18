@@ -109,11 +109,10 @@ function toggleFab() {
         DOM.fabMenuOptions.classList.add('shift-down');
         DOM.fabMenuOptions.classList.add('opacity-0');
         DOM.masterFab.classList.remove('master-fab-active');
-        setTimeout(() => DOM.fabMenuOptions.add('hidden'), 150);
+        setTimeout(() => DOM.fabMenuOptions.classList.add('hidden'), 150);
     }
 }
 
-// 🛠️ CRITICAL FIXED UTILITY: Instantly destroys any menu hanging loops
 function resetFabStateInstantly() {
     state.isFabOpen = false;
     DOM.fabMenuOptions.className = 'fab-options-stack hidden opacity-0 shift-down';
@@ -130,7 +129,6 @@ function openEditor(noteId = null) {
     resetFabStateInstantly();
     state.currentNoteId = noteId;
     
-    // Hide home floating action system elements completely while editing templates
     const wrapper = document.getElementById('masterFabWrapper');
     if (wrapper) wrapper.style.setProperty('display', 'none', 'important');
 
@@ -198,7 +196,6 @@ function discardAndClose() {
     DOM.editorView.classList.remove('mask-up');
     DOM.editorView.classList.add('mask-down');
     
-    // Reset FAB values instantly when exiting back to main stream board
     resetFabStateInstantly();
 
     setTimeout(() => DOM.editorView.classList.add('hidden'), 300);
@@ -387,7 +384,6 @@ function setupEventListeners() {
         DOM.sketchView.classList.remove('mask-up');
         DOM.sketchView.classList.add('mask-down');
         
-        // Handle direct exits cleanly
         if (DOM.editorView.classList.contains('hidden')) {
             resetFabStateInstantly();
         }
